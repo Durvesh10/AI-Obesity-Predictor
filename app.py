@@ -1,3 +1,4 @@
+
 # ============================================
 # AI OBESITY LEVEL PREDICTOR & HABIT COACH
 # ============================================
@@ -498,7 +499,11 @@ def habit_coach(row):
 # ACTION PLAN
 # ============================================
 
-def create_action_plan(row, bmi, prediction):
+def create_action_plan(
+    row,
+    bmi,
+    prediction
+):
 
     actions = []
 
@@ -969,9 +974,7 @@ def predict_and_display(
         )
 
 
-        # ----------------------------
-        # PREDICTION
-        # ----------------------------
+        # Prediction result
 
         prediction_text = f"""
 ## 🎯 Predicted Obesity Level
@@ -982,9 +985,7 @@ The AI model's most likely classification based on the information provided.
 """
 
 
-        # ----------------------------
-        # BMI
-        # ----------------------------
+        # BMI result
 
         bmi_text = f"""
 ## ⚖️ BMI
@@ -995,9 +996,7 @@ The AI model's most likely classification based on the information provided.
 """
 
 
-        # ----------------------------
-        # RISK
-        # ----------------------------
+        # Risk result
 
         risk_text = f"""
 ## 📈 Overall Risk
@@ -1010,11 +1009,8 @@ This represents the model's estimated probability of being in an overweight or o
 """
 
 
-        # ----------------------------
-        # HABIT COACH
-        # IMPORTANT:
-        # No duplicate heading here.
-        # ----------------------------
+        # Habit Coach content
+        # Heading is already outside this function
 
         recommendations_text = """
 Based on your lifestyle answers:
@@ -1029,11 +1025,8 @@ Based on your lifestyle answers:
             )
 
 
-        # ----------------------------
-        # ACTION PLAN
-        # IMPORTANT:
-        # No duplicate heading here.
-        # ----------------------------
+        # Action Plan content
+        # Heading is already outside this function
 
         action_text = ""
 
@@ -1106,45 +1099,38 @@ Please check your inputs and try again.
 CSS = """
 
 body {
-
     background: #f5f7fb;
-
 }
 
 
 .gradio-container {
-
     max-width: 1200px !important;
-
     margin: auto !important;
-
+    padding-top: 20px !important;
 }
 
 
 .main-title {
-
-    text-align: center;
-
-    font-size: 34px;
-
-    font-weight: 700;
-
-    margin-bottom: 5px;
-
+    width: 100%;
+    text-align: center !important;
+    font-size: 42px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 20px auto 8px auto !important;
+    padding: 10px 0 !important;
 }
 
 
 .subtitle {
-
-    text-align: center;
-
-    color: #64748b;
-
-    font-size: 16px;
-
-    margin-bottom: 25px;
-
+    width: 100%;
+    text-align: center !important;
+    color: #64748b !important;
+    font-size: 19px !important;
+    line-height: 1.5 !important;
+    margin: 0 auto 30px auto !important;
+    padding: 0 !important;
 }
+
 
 """
 
@@ -1164,22 +1150,21 @@ with gr.Blocks(
 ) as demo:
 
 
+    # ========================================
+    # MAIN TITLE
+    # ========================================
+
     gr.Markdown("""
 
-        <div class="main-title">
+<div class="main-title">
+    🧠 AI Obesity Level Predictor
+</div>
 
-            🧠 AI Obesity Level Predictor
+<div class="subtitle">
+    Predict obesity level and receive personalized lifestyle suggestions
+</div>
 
-        </div>
-
-        <div class="subtitle">
-
-            Predict obesity level and receive
-            personalized lifestyle suggestions
-
-        </div>
-
-    """)
+""")
 
 
     # ========================================
@@ -1486,29 +1471,29 @@ with gr.Blocks(
 
         result_prediction = gr.Markdown("""
 
-            ### 🎯 Predicted Level
+### 🎯 Predicted Level
 
-            **Waiting for prediction...**
+**Waiting for prediction...**
 
-        """)
+""")
 
 
         result_bmi = gr.Markdown("""
 
-            ### ⚖️ BMI
+### ⚖️ BMI
 
-            **Waiting for prediction...**
+**Waiting for prediction...**
 
-        """)
+""")
 
 
         result_risk = gr.Markdown("""
 
-            ### 📈 Overall Risk
+### 📈 Overall Risk
 
-            **Waiting for prediction...**
+**Waiting for prediction...**
 
-        """)
+""")
 
 
     with gr.Row():
@@ -1524,7 +1509,7 @@ with gr.Blocks(
 
 
     # ========================================
-    # HABIT COACH
+    # SIMPLE HABIT COACH
     # ========================================
 
     gr.Markdown(
@@ -1558,7 +1543,7 @@ with gr.Blocks(
 
 
     # ========================================
-    # BUTTON FUNCTION
+    # BUTTON CONNECTION
     # ========================================
 
     predict_button.click(
@@ -1608,7 +1593,7 @@ with gr.Blocks(
 
 
 # ============================================
-# APPLICATION START
+# START APPLICATION
 # ============================================
 
 print(
