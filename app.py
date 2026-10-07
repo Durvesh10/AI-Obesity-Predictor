@@ -183,12 +183,28 @@ def create_bmi_gauge(bmi):
             value=bmi,
 
             title={
-                "text": "BMI"
+                "text": "BMI",
+                "font": {
+                    "size": 22
+                }
+            },
+
+            number={
+                "font": {
+                    "size": 40
+                }
             },
 
             gauge={
+
                 "axis": {
-                    "range": [10, 50]
+                    "range": [10, 50],
+
+                    "tickfont": {
+                        "size": 14
+                    },
+
+                    "tickwidth": 1
                 },
 
                 "bar": {
@@ -196,6 +212,7 @@ def create_bmi_gauge(bmi):
                 },
 
                 "steps": [
+
                     {
                         "range": [10, 18.5],
                         "name": "Underweight"
@@ -215,24 +232,33 @@ def create_bmi_gauge(bmi):
                         "range": [30, 50],
                         "name": "Obesity"
                     }
+
                 ]
+
             }
+
         )
     )
 
     fig.update_layout(
-        height=300,
+
+        height=320,
 
         margin=dict(
-            l=20,
-            r=20,
-            t=50,
-            b=20
+            l=30,
+            r=30,
+            t=65,
+            b=30
         ),
 
-        # Makes Plotly work better with light/dark UI
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)"
+
+        plot_bgcolor="rgba(0,0,0,0)",
+
+        font={
+            "size": 14
+        }
+
     )
 
     return fig
@@ -258,8 +284,11 @@ def create_probability_chart(
     ]
 
     fig = go.Figure(
+
         data=[
+
             go.Bar(
+
                 x=display_classes,
 
                 y=probability_values,
@@ -269,33 +298,81 @@ def create_probability_chart(
                     for p in probability_values
                 ],
 
-                textposition="auto"
+                textposition="auto",
+
+                hovertemplate=(
+                    "<b>%{x}</b><br>"
+                    "Probability: %{y:.1f}%"
+                    "<extra></extra>"
+                )
+
             )
+
         ]
+
     )
 
     fig.update_layout(
-        title="Obesity Class Probability",
 
-        xaxis_title="Obesity Category",
+        title={
+            "text": "Obesity Class Probability",
 
-        yaxis_title="Probability (%)",
-
-        yaxis={
-            "range": [0, 100]
+            "font": {
+                "size": 22
+            }
         },
 
-        height=400,
+        xaxis={
+
+            "title": {
+                "text": "Obesity Category"
+            },
+
+            "tickfont": {
+                "size": 12
+            },
+
+            "automargin": True
+
+        },
+
+        yaxis={
+
+            "title": {
+                "text": "Probability (%)"
+            },
+
+            "range": [0, 100],
+
+            "tickfont": {
+                "size": 12
+            }
+
+        },
+
+        height=420,
 
         margin=dict(
-            l=40,
+            l=65,
             r=30,
-            t=60,
-            b=100
+            t=75,
+            b=125
         ),
 
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)"
+
+        plot_bgcolor="rgba(0,0,0,0)",
+
+        font={
+            "size": 14
+        },
+
+        hoverlabel={
+            "font": {
+                "size": 13
+            }
+        }
+
     )
 
     return fig
@@ -457,8 +534,6 @@ def generate_habit_coach(
         )
 
 
-    # Format recommendations
-
     recommendations_text = """
 ### Personalized Suggestions
 
@@ -608,8 +683,6 @@ def generate_action_plan(
             "Continue maintaining responsible beverage choices."
         )
 
-
-    # Format action plan
 
     action_text = """
 ### Your Personalized Action Plan
@@ -909,9 +982,9 @@ It is **not a medically validated risk score or diagnosis**.
 
 CSS = """
 
-/* ---------------------------------------------------------
-   Main application container
-   --------------------------------------------------------- */
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
 
 .gradio-container {
     max-width: 1200px !important;
@@ -920,154 +993,231 @@ CSS = """
 }
 
 
-/* ---------------------------------------------------------
-   Custom information cards
-   These variables automatically follow Gradio light/dark mode
-   --------------------------------------------------------- */
+/* =========================================================
+   THEME-COMPATIBLE INFORMATION CARDS
+   ========================================================= */
 
 .app-info-card {
+
     background: var(--block-background-fill);
+
     color: var(--body-text-color);
+
     border: 1px solid var(--block-border-color);
+
     border-radius: 12px;
+
     padding: 20px 24px;
+
     margin: 10px 0 20px 0;
+
     box-sizing: border-box;
+
 }
 
 
 .app-info-card h3,
 .app-info-card h4 {
+
     color: var(--body-text-color);
+
     margin-top: 0;
+
 }
 
 
 .app-info-card p,
 .app-info-card li {
+
     color: var(--body-text-color);
+
     line-height: 1.6;
+
 }
 
 
 .app-info-card hr {
+
     border: none;
+
     border-top: 1px solid var(--block-border-color);
+
     margin: 18px 0;
+
 }
 
 
-/* ---------------------------------------------------------
-   Title
-   --------------------------------------------------------- */
+/* =========================================================
+   TITLE
+   ========================================================= */
 
 .app-title {
+
     width: 100%;
+
     text-align: center;
+
     padding: 25px 20px 30px 20px;
+
     background: var(--block-background-fill);
+
     border: 1px solid var(--block-border-color);
+
     border-radius: 12px;
+
     margin-bottom: 25px;
+
     box-sizing: border-box;
+
 }
 
 
 .app-title h1 {
+
     margin: 0;
+
     padding: 0;
+
     color: var(--body-text-color);
+
     font-size: 36px;
+
     font-weight: 800;
+
     line-height: 1.3;
+
     text-align: center;
+
 }
 
 
 .app-title p {
+
     margin: 14px 0 0 0;
+
     padding: 0;
+
     color: var(--body-text-color);
+
     opacity: 0.75;
+
     font-size: 19px;
+
     font-weight: 500;
+
     line-height: 1.5;
+
     text-align: center;
+
 }
 
 
-/* ---------------------------------------------------------
-   Quick reminder
-   --------------------------------------------------------- */
+/* =========================================================
+   QUICK REMINDER
+   ========================================================= */
 
 .quick-reminder {
+
     background: var(--block-background-fill);
+
     color: var(--body-text-color);
+
     border: 1px solid var(--block-border-color);
+
     border-radius: 12px;
+
     padding: 20px 24px;
+
     margin: 10px 0 20px 0;
+
 }
 
 
 .quick-reminder h3 {
+
     color: var(--body-text-color);
+
     margin-top: 0;
+
 }
 
 
 .quick-reminder li {
+
     color: var(--body-text-color);
+
     line-height: 1.7;
+
 }
 
 
-/* ---------------------------------------------------------
-   Disclaimer
-   --------------------------------------------------------- */
+/* =========================================================
+   DISCLAIMER
+   ========================================================= */
 
 .disclaimer-card {
+
     background: var(--block-background-fill);
+
     color: var(--body-text-color);
+
     border: 1px solid var(--block-border-color);
+
     border-radius: 12px;
+
     padding: 22px 24px;
+
     margin-top: 30px;
+
     margin-bottom: 20px;
+
     box-sizing: border-box;
+
 }
 
 
 .disclaimer-card h2 {
+
     color: var(--body-text-color);
+
     margin-top: 0;
+
 }
 
 
 .disclaimer-card p {
+
     color: var(--body-text-color);
+
     line-height: 1.6;
+
 }
 
 
-/* ---------------------------------------------------------
-   Mobile compatibility
-   --------------------------------------------------------- */
+/* =========================================================
+   MOBILE COMPATIBILITY
+   ========================================================= */
 
 @media (max-width: 768px) {
 
     .app-title h1 {
+
         font-size: 28px;
+
     }
 
     .app-title p {
+
         font-size: 17px;
+
     }
 
     .app-info-card,
     .quick-reminder,
     .disclaimer-card {
+
         padding: 16px 18px;
+
     }
 
 }
@@ -1081,7 +1231,10 @@ CSS = """
 
 with gr.Blocks(
 
-    title="AI/ML-Based Obesity Level Prediction and Personalized Habit Coaching System",
+    title=(
+        "AI/ML-Based Obesity Level Prediction "
+        "and Personalized Habit Coaching System"
+    ),
 
     css=CSS,
 
