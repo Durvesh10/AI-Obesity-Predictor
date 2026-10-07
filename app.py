@@ -228,7 +228,11 @@ def create_bmi_gauge(bmi):
             r=20,
             t=50,
             b=20
-        )
+        ),
+
+        # Makes Plotly work better with light/dark UI
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
 
     return fig
@@ -288,7 +292,10 @@ def create_probability_chart(
             r=30,
             t=60,
             b=100
-        )
+        ),
+
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
 
     return fig
@@ -450,7 +457,7 @@ def generate_habit_coach(
         )
 
 
-    # Separate bullet points
+    # Format recommendations
 
     recommendations_text = """
 ### Personalized Suggestions
@@ -897,19 +904,172 @@ It is **not a medically validated risk score or diagnosis**.
 
 
 # ============================================================
-# 16. SIMPLE CSS
+# 16. THEME-COMPATIBLE CSS
 # ============================================================
 
 CSS = """
 
-body {
-    background-color: #f5f7fb;
-}
+/* ---------------------------------------------------------
+   Main application container
+   --------------------------------------------------------- */
 
 .gradio-container {
     max-width: 1200px !important;
     margin: auto !important;
     padding-top: 20px !important;
+}
+
+
+/* ---------------------------------------------------------
+   Custom information cards
+   These variables automatically follow Gradio light/dark mode
+   --------------------------------------------------------- */
+
+.app-info-card {
+    background: var(--block-background-fill);
+    color: var(--body-text-color);
+    border: 1px solid var(--block-border-color);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 10px 0 20px 0;
+    box-sizing: border-box;
+}
+
+
+.app-info-card h3,
+.app-info-card h4 {
+    color: var(--body-text-color);
+    margin-top: 0;
+}
+
+
+.app-info-card p,
+.app-info-card li {
+    color: var(--body-text-color);
+    line-height: 1.6;
+}
+
+
+.app-info-card hr {
+    border: none;
+    border-top: 1px solid var(--block-border-color);
+    margin: 18px 0;
+}
+
+
+/* ---------------------------------------------------------
+   Title
+   --------------------------------------------------------- */
+
+.app-title {
+    width: 100%;
+    text-align: center;
+    padding: 25px 20px 30px 20px;
+    background: var(--block-background-fill);
+    border: 1px solid var(--block-border-color);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-sizing: border-box;
+}
+
+
+.app-title h1 {
+    margin: 0;
+    padding: 0;
+    color: var(--body-text-color);
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+}
+
+
+.app-title p {
+    margin: 14px 0 0 0;
+    padding: 0;
+    color: var(--body-text-color);
+    opacity: 0.75;
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   Quick reminder
+   --------------------------------------------------------- */
+
+.quick-reminder {
+    background: var(--block-background-fill);
+    color: var(--body-text-color);
+    border: 1px solid var(--block-border-color);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 10px 0 20px 0;
+}
+
+
+.quick-reminder h3 {
+    color: var(--body-text-color);
+    margin-top: 0;
+}
+
+
+.quick-reminder li {
+    color: var(--body-text-color);
+    line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   Disclaimer
+   --------------------------------------------------------- */
+
+.disclaimer-card {
+    background: var(--block-background-fill);
+    color: var(--body-text-color);
+    border: 1px solid var(--block-border-color);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+
+.disclaimer-card h2 {
+    color: var(--body-text-color);
+    margin-top: 0;
+}
+
+
+.disclaimer-card p {
+    color: var(--body-text-color);
+    line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   Mobile compatibility
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .app-title h1 {
+        font-size: 28px;
+    }
+
+    .app-title p {
+        font-size: 17px;
+    }
+
+    .app-info-card,
+    .quick-reminder,
+    .disclaimer-card {
+        padding: 16px 18px;
+    }
+
 }
 
 """
@@ -936,35 +1096,17 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        text-align:center;
-        width:100%;
-        padding:20px 0 25px 0;
-        color:#0f172a;
-    ">
+    <div class="app-title">
 
-        <div style="
-            font-size:36px;
-            font-weight:800;
-            line-height:1.25;
-            color:#0f172a;
-        ">
-
+        <h1>
             🧠 AI/ML-Based Obesity Level Prediction
             and Personalized Habit Coaching System
+        </h1>
 
-        </div>
-
-        <div style="
-            font-size:19px;
-            color:#475569;
-            margin-top:12px;
-        ">
-
+        <p>
             Predict obesity level and receive personalized
             lifestyle suggestions
-
-        </div>
+        </p>
 
     </div>
 
@@ -980,56 +1122,42 @@ with gr.Blocks(
     )
 
 
-    # INLINE STYLING ONLY
-    # This prevents Chrome from changing the text color.
-
     gr.HTML("""
 
-    <div style="
-        background:#ffffff;
-        color:#1e293b;
-        border:1px solid #dbe3ec;
-        border-radius:12px;
-        padding:20px 24px;
-        margin:10px 0 20px 0;
-        box-shadow:0 2px 8px rgba(15,23,42,0.05);
-    ">
+    <div class="app-info-card">
 
-        <h3 style="
-            color:#0f172a;
-            margin-top:0;
-        ">
+        <h3>
             What does this application do?
         </h3>
 
-        <p style="color:#1e293b;">
+        <p>
             This application uses a machine-learning model to
             estimate an obesity category from physical and
             lifestyle-related information.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             It also calculates BMI separately and provides
             probability visualizations, simple habit suggestions
             and a personalized action plan.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Machine Learning Model:</b>
             Random Forest Classifier with 300 decision trees.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Dataset:</b>
             UCI Obesity Dataset.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Learning Type:</b>
             Supervised Machine Learning – Multiclass Classification.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Important:</b>
             The results are intended for educational and
             informational purposes and should not be treated
@@ -1052,224 +1180,190 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        background:#f8fafc;
-        color:#1e293b;
-        border:1px solid #dbe3ec;
-        border-radius:12px;
-        padding:20px 24px;
-        margin:8px 0 20px 0;
-    ">
+    <div class="app-info-card">
 
-        <h3 style="
-            color:#0f172a;
-            margin-top:0;
-        ">
+        <h3>
             🔢 Understanding the Numerical Scales
         </h3>
 
-        <p style="color:#1e293b;">
+        <p>
             Some questions use numerical scales instead of direct
             measurements. These values represent the coding used
             by the dataset.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             FCVC – Vegetable Consumption Frequency
         </h4>
 
-        <ul style="color:#1e293b;">
+        <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>1</b> → Rarely consume vegetables
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>2</b> → Sometimes / moderate consumption
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>3</b> → Frequently consume vegetables
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             Example: <b>2.3</b> represents a value between
             2 and 3. Use the slider to select an approximate value.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             NCP – Number of Main Meals
         </h4>
 
-        <ul style="color:#1e293b;">
+        <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>1</b> → About one main meal per day
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>2</b> → About two main meals per day
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>3</b> → About three main meals per day
             </li>
 
-            <li style="color:#1e293b;">
-                <b>4</b> → Four or more main meals per day
+            <li>
+                <b>4</b> → About four main meals per day
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             Example: If you normally eat three main meals,
             choose approximately <b>3</b>.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             CH2O – Daily Water Consumption
         </h4>
 
-        <ul style="color:#1e293b;">
+        <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>1</b> → Low water consumption
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>2</b> → Moderate water consumption
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>3</b> → High water consumption
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Important:</b> These are dataset scale values,
             <b>not litres</b>. Do not enter your water intake
             directly in litres.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             FAF – Physical Activity Frequency
         </h4>
 
-        <ul style="color:#1e293b;">
+        <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>0</b> → Little or no physical activity
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>1</b> → Low physical activity
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>2</b> → Moderate physical activity
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>3</b> → High physical activity
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             Example: If you exercise regularly but not very
             frequently, a value around <b>1–2</b> may be appropriate.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             TUE – Technology Usage Time
         </h4>
 
-        <ul style="color:#1e293b;">
+        <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>0</b> → Low device/screen usage
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>1</b> → Moderate device/screen usage
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>2</b> → High device/screen usage
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             This is a dataset scale and should not be interpreted
             as an exact number of hours.
         </p>
 
 
-        <hr style="
-            border:none;
-            border-top:1px solid #cbd5e1;
-            margin:18px 0;
-        ">
+        <hr>
 
 
-        <h4 style="color:#0f172a;">
+        <h4>
             Physical Measurements
         </h4>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Age:</b> Enter your age in years.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Height:</b> Enter height in metres.
             Example: 170 cm = <b>1.70 m</b>.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Weight:</b> Enter body weight in kilograms.
             Example: 70 kg = <b>70</b>.
         </p>
@@ -1558,49 +1652,39 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        background:#ffffff;
-        color:#1e293b;
-        border:1px solid #dbe3ec;
-        border-radius:12px;
-        padding:20px 24px;
-        margin:10px 0 20px 0;
-    ">
+    <div class="quick-reminder">
 
-        <h3 style="
-            color:#0f172a;
-            margin-top:0;
-        ">
+        <h3>
             ✅ Quick Input Reminder
         </h3>
 
         <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 Height → enter in <b>metres</b>, e.g. 1.70
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 Weight → enter in <b>kilograms</b>, e.g. 70
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 FCVC → <b>1–3 scale</b> for vegetable consumption
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 NCP → approximately <b>1–4 main meals</b>
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 CH2O → <b>1–3 dataset scale</b>, not litres
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 FAF → <b>0–3 scale</b> for physical activity
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 TUE → <b>0–2 scale</b> for technology usage
             </li>
 
@@ -1670,42 +1754,32 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        background:#ffffff;
-        color:#1e293b;
-        border:1px solid #dbe3ec;
-        border-radius:12px;
-        padding:20px 24px;
-        margin:10px 0 20px 0;
-    ">
+    <div class="app-info-card">
 
-        <h3 style="
-            color:#0f172a;
-            margin-top:0;
-        ">
+        <h3>
             📌 Understanding Your Results
         </h3>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Predicted Obesity Level:</b>
             This is the category predicted by the Random Forest
             machine-learning model.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>BMI:</b>
             BMI is calculated separately using your height and weight.
             It is not directly used as an input feature in the current
             machine-learning model.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Probability Chart:</b>
             The chart shows the model's estimated probability for
             each of the seven possible categories.
         </p>
 
-        <p style="color:#1e293b;">
+        <p>
             <b>Estimated Risk Indicator:</b>
             This combines the model probabilities of the
             non-healthy categories. It is an application-specific
@@ -1756,60 +1830,50 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        background:#ffffff;
-        color:#1e293b;
-        border:1px solid #dbe3ec;
-        border-radius:12px;
-        padding:20px 24px;
-        margin:10px 0 20px 0;
-    ">
+    <div class="app-info-card">
 
-        <h3 style="
-            color:#0f172a;
-            margin-top:0;
-        ">
+        <h3>
             Machine Learning Details
         </h3>
 
-        <p style="color:#1e293b;">
+        <p>
             This application uses a <b>Random Forest Classifier</b>
             trained on the UCI Obesity Dataset.
         </p>
 
         <ul>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Learning Type:</b> Supervised Learning
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Task:</b> Multiclass Classification
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Algorithm:</b> Random Forest Classifier
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Number of Trees:</b> 300
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Train/Test Split:</b> 80% / 20%
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Categorical Data:</b> One-Hot Encoded
             </li>
 
-            <li style="color:#1e293b;">
+            <li>
                 <b>Output:</b> Seven obesity-related categories
             </li>
 
         </ul>
 
-        <p style="color:#1e293b;">
+        <p>
             The <b>Habit Coach</b> and <b>Action Plan</b> are
             rule-based components. They are not generated by the
             Random Forest model.
@@ -1826,55 +1890,44 @@ with gr.Blocks(
 
     gr.HTML("""
 
-    <div style="
-        background:#fff7ed;
-        color:#431407;
-        border:1px solid #fdba74;
-        border-radius:12px;
-        padding:22px 24px;
-        margin-top:30px;
-        margin-bottom:20px;
-    ">
+    <div class="disclaimer-card">
 
-        <h2 style="
-            color:#7c2d12;
-            margin-top:0;
-        ">
+        <h2>
             ⚠️ Disclaimer
         </h2>
 
-        <p style="color:#431407;">
+        <p>
             This application is developed for
             <b>educational, demonstration and informational purposes only</b>.
         </p>
 
-        <p style="color:#431407;">
+        <p>
             The predictions generated by this application are based
             on a machine-learning model trained on the UCI Obesity
             Dataset and should <b>not</b> be considered a medical
             diagnosis, clinical assessment or professional medical advice.
         </p>
 
-        <p style="color:#431407;">
+        <p>
             BMI and the model's estimated probabilities have limitations
             and may not accurately represent an individual's complete
             health condition.
         </p>
 
-        <p style="color:#431407;">
+        <p>
             The Habit Coach and Action Plan provide general lifestyle
             suggestions and are not a substitute for advice from a
             qualified doctor, dietitian, nutritionist or other healthcare
             professional.
         </p>
 
-        <p style="color:#431407;">
+        <p>
             If you have concerns about your weight, nutrition, physical
             activity or overall health, consult a qualified healthcare
             professional.
         </p>
 
-        <p style="color:#431407;">
+        <p>
             <b>
             By using this application, you acknowledge that its results
             are informational and should be interpreted with appropriate
