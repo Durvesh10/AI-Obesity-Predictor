@@ -29,10 +29,8 @@ df["NObeyesdad"] = y
 # 2. PREPARE DATA
 # ============================================================
 
-# Height and Weight are NOT used directly as ML features.
-# They are used separately to calculate BMI.
-#
-# NObeyesdad is the target variable.
+# Height and Weight are used separately for BMI calculation.
+# They are not used directly as ML input features.
 
 X = df.drop(
     columns=["NObeyesdad", "Height", "Weight"]
@@ -202,17 +200,14 @@ def create_bmi_gauge(bmi):
                         "range": [10, 18.5],
                         "name": "Underweight"
                     },
-
                     {
                         "range": [18.5, 25],
                         "name": "Normal"
                     },
-
                     {
                         "range": [25, 30],
                         "name": "Overweight"
                     },
-
                     {
                         "range": [30, 50],
                         "name": "Obesity"
@@ -443,7 +438,7 @@ def generate_habit_coach(
         pass
 
 
-    # Default
+    # Default recommendation
 
     if not recommendations:
 
@@ -452,7 +447,7 @@ def generate_habit_coach(
         )
 
 
-    # Format each suggestion on a separate line
+    # Format each recommendation separately
 
     recommendations_text = """
 ### Personalized Suggestions
@@ -899,43 +894,289 @@ It is **not a medically validated risk score or diagnosis**.
 
 
 # ============================================================
-# 16. CSS
+# 16. CSS - CHROME COMPATIBILITY FIX
 # ============================================================
 
 CSS = """
 
+/* =========================================================
+   GLOBAL PAGE
+   ========================================================= */
+
 body {
-    background: #f5f7fb;
+    background-color: #f5f7fb !important;
 }
+
+
+/* =========================================================
+   MAIN GRADIO CONTAINER
+   ========================================================= */
 
 .gradio-container {
     max-width: 1200px !important;
     margin: auto !important;
     padding-top: 20px !important;
+
+    color: #1e293b !important;
 }
+
+
+/* =========================================================
+   FORCE MARKDOWN TEXT TO BE DARK
+   ========================================================= */
+
+.gradio-container .prose,
+.gradio-container .prose p,
+.gradio-container .prose li,
+.gradio-container .prose ul,
+.gradio-container .prose ol,
+.gradio-container .prose strong,
+.gradio-container .prose b {
+    color: #1e293b !important;
+}
+
+
+/* =========================================================
+   MARKDOWN HEADINGS
+   ========================================================= */
+
+.gradio-container .prose h1,
+.gradio-container .prose h2,
+.gradio-container .prose h3,
+.gradio-container .prose h4 {
+    color: #0f172a !important;
+}
+
+
+/* =========================================================
+   INFORMATION BOX
+   ========================================================= */
 
 .info-box {
-    background: white;
+
+    background-color: #ffffff !important;
+
+    color: #1e293b !important;
+
     border-radius: 12px;
-    padding: 18px 22px;
+
+    padding: 20px 24px;
+
     margin: 10px 0 20px 0;
-    border: 1px solid #e2e8f0;
+
+    border: 1px solid #dbe3ec;
+
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+
 }
+
+
+/* =========================================================
+   INFORMATION BOX TEXT
+   ========================================================= */
+
+.info-box,
+.info-box p,
+.info-box li,
+.info-box ul,
+.info-box ol,
+.info-box span,
+.info-box div {
+
+    color: #1e293b !important;
+
+}
+
+
+/* =========================================================
+   INFORMATION BOX HEADINGS
+   ========================================================= */
+
+.info-box h1,
+.info-box h2,
+.info-box h3,
+.info-box h4 {
+
+    color: #0f172a !important;
+
+}
+
+
+/* =========================================================
+   SCALE BOX
+   ========================================================= */
 
 .scale-box {
-    background: #f8fafc;
-    border-radius: 10px;
-    padding: 15px 20px;
-    margin: 8px 0 15px 0;
-    border: 1px solid #e2e8f0;
+
+    background-color: #f8fafc !important;
+
+    color: #1e293b !important;
+
+    border-radius: 12px;
+
+    padding: 20px 24px;
+
+    margin: 8px 0 20px 0;
+
+    border: 1px solid #dbe3ec;
+
 }
 
+
+/* =========================================================
+   SCALE BOX TEXT
+   ========================================================= */
+
+.scale-box,
+.scale-box p,
+.scale-box li,
+.scale-box ul,
+.scale-box ol,
+.scale-box span,
+.scale-box div {
+
+    color: #1e293b !important;
+
+}
+
+
+/* =========================================================
+   SCALE BOX HEADINGS
+   ========================================================= */
+
+.scale-box h1,
+.scale-box h2,
+.scale-box h3,
+.scale-box h4 {
+
+    color: #0f172a !important;
+
+}
+
+
+/* =========================================================
+   DISCLAIMER
+   ========================================================= */
+
 .disclaimer-box {
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+
+    background-color: #fff7ed !important;
+
+    color: #431407 !important;
+
+    border: 1px solid #fdba74;
+
     border-radius: 12px;
-    padding: 20px;
+
+    padding: 22px 24px;
+
     margin-top: 30px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================================================
+   DISCLAIMER TEXT
+   ========================================================= */
+
+.disclaimer-box,
+.disclaimer-box p,
+.disclaimer-box li,
+.disclaimer-box ul,
+.disclaimer-box span,
+.disclaimer-box div {
+
+    color: #431407 !important;
+
+}
+
+
+/* =========================================================
+   DISCLAIMER HEADINGS
+   ========================================================= */
+
+.disclaimer-box h1,
+.disclaimer-box h2,
+.disclaimer-box h3,
+.disclaimer-box h4 {
+
+    color: #7c2d12 !important;
+
+}
+
+
+/* =========================================================
+   INPUT LABELS
+   ========================================================= */
+
+.gradio-container label,
+.gradio-container label span {
+
+    color: #1e293b !important;
+
+}
+
+
+/* =========================================================
+   INPUT DESCRIPTIONS / INFO TEXT
+   ========================================================= */
+
+.gradio-container .info,
+.gradio-container small {
+
+    color: #475569 !important;
+
+}
+
+
+/* =========================================================
+   RADIO / CHECKBOX TEXT
+   ========================================================= */
+
+.gradio-container input + span,
+.gradio-container .wrap span {
+
+    color: #1e293b !important;
+
+}
+
+
+/* =========================================================
+   BUTTON TEXT
+   ========================================================= */
+
+.gradio-container button {
+
+    font-weight: 600 !important;
+
+}
+
+
+/* =========================================================
+   MARKDOWN LINKS
+   ========================================================= */
+
+.gradio-container .prose a {
+
+    color: #2563eb !important;
+
+}
+
+
+/* =========================================================
+   HORIZONTAL RULE
+   ========================================================= */
+
+.scale-box hr {
+
+    border: none;
+
+    border-top: 1px solid #cbd5e1;
+
+    margin: 18px 0;
+
 }
 
 """
@@ -972,6 +1213,7 @@ with gr.Blocks(
             font-size:36px;
             font-weight:800;
             line-height:1.25;
+            color:#0f172a !important;
         ">
 
             🧠 AI/ML-Based Obesity Level Prediction
@@ -981,7 +1223,7 @@ with gr.Blocks(
 
         <div style="
             font-size:19px;
-            color:#64748b;
+            color:#475569 !important;
             margin-top:12px;
         ">
 
@@ -996,16 +1238,19 @@ with gr.Blocks(
 
 
     # ========================================================
-    # ABOUT THE APPLICATION
+    # ABOUT APPLICATION
     # ========================================================
 
-    gr.Markdown("## ℹ️ About This Application")
+    gr.Markdown(
+        "## ℹ️ About This Application"
+    )
+
 
     gr.HTML("""
 
     <div class="info-box">
 
-        <b>What does this application do?</b>
+        <h3>What does this application do?</h3>
 
         <p>
         This application uses a machine-learning model to estimate
@@ -1030,6 +1275,11 @@ with gr.Blocks(
         </p>
 
         <p>
+        <b>Learning Type:</b>
+        Supervised Machine Learning – Multiclass Classification.
+        </p>
+
+        <p>
         <b>Important:</b>
         The results are intended for educational and informational
         purposes and should not be treated as a medical diagnosis.
@@ -1044,7 +1294,10 @@ with gr.Blocks(
     # HOW TO ENTER VALUES
     # ========================================================
 
-    gr.Markdown("## 📖 How to Enter the Values")
+    gr.Markdown(
+        "## 📖 How to Enter the Values"
+    )
+
 
     gr.HTML("""
 
@@ -1071,9 +1324,8 @@ with gr.Blocks(
         </ul>
 
         <p>
-        Values such as <b>2.3</b> represent a level between
-        2 and 3. You can use the slider to select an approximate
-        value.
+        Example: <b>2.3</b> means a value between 2 and 3.
+        Use the slider to select an approximate value.
         </p>
 
         <hr>
@@ -1107,8 +1359,9 @@ with gr.Blocks(
         </ul>
 
         <p>
-        These are dataset scale values, not litres.
-        Do <b>not</b> enter your water intake directly in litres.
+        <b>Important:</b> These are dataset scale values,
+        <b>not litres</b>. Do not enter your water intake
+        directly in litres.
         </p>
 
         <hr>
@@ -1142,7 +1395,7 @@ with gr.Blocks(
         </ul>
 
         <p>
-        This is also a dataset scale and should not be interpreted
+        This is a dataset scale and should not be interpreted
         as an exact number of hours.
         </p>
 
@@ -1154,12 +1407,12 @@ with gr.Blocks(
 
         <p>
         <b>Height:</b> Enter height in metres.
-        For example, 170 cm = <b>1.70 m</b>.
+        Example: 170 cm = <b>1.70 m</b>.
         </p>
 
         <p>
         <b>Weight:</b> Enter body weight in kilograms.
-        For example, 70 kg = <b>70</b>.
+        Example: 70 kg = <b>70</b>.
         </p>
 
     </div>
@@ -1228,7 +1481,7 @@ with gr.Blocks(
 
 
     # ========================================================
-    # FAMILY HISTORY
+    # FAMILY & EATING HABITS
     # ========================================================
 
     gr.Markdown(
@@ -1441,7 +1694,7 @@ with gr.Blocks(
 
 
     # ========================================================
-    # QUICK REMINDER
+    # QUICK INPUT REMINDER
     # ========================================================
 
     gr.HTML("""
@@ -1451,13 +1704,13 @@ with gr.Blocks(
         <h3>✅ Quick Input Reminder</h3>
 
         <ul>
-            <li>Height must be entered in <b>metres</b>, e.g. 1.70</li>
-            <li>Weight must be entered in <b>kilograms</b>, e.g. 70</li>
-            <li>FCVC: <b>1–3 scale</b> for vegetable consumption</li>
-            <li>NCP: approximately <b>1–4 main meals</b></li>
-            <li>CH2O: <b>1–3 dataset scale</b>, not litres</li>
-            <li>FAF: <b>0–3 scale</b> for physical activity</li>
-            <li>TUE: <b>0–2 scale</b> for technology usage</li>
+            <li>Height → enter in <b>metres</b>, e.g. 1.70</li>
+            <li>Weight → enter in <b>kilograms</b>, e.g. 70</li>
+            <li>FCVC → <b>1–3 scale</b> for vegetable consumption</li>
+            <li>NCP → approximately <b>1–4 main meals</b></li>
+            <li>CH2O → <b>1–3 dataset scale</b>, not litres</li>
+            <li>FAF → <b>0–3 scale</b> for physical activity</li>
+            <li>TUE → <b>0–2 scale</b> for technology usage</li>
         </ul>
 
     </div>
@@ -1681,7 +1934,7 @@ with gr.Blocks(
         professional.
         </p>
 
-        <p style="margin-bottom:0;">
+        <p>
         <b>By using this application, you acknowledge that its results
         are informational and should be interpreted with appropriate
         professional guidance.</b>
