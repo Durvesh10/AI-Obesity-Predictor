@@ -1,0 +1,6 @@
+gradio
+plotly
+scikit-learn
+pandas
+numpy
+ucimlrepo
