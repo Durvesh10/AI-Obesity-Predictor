@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 
 # ============================================================
-# 1. LOAD DATASET
+# 1. LOAD UCI DATASET
 # ============================================================
 
 obesity = fetch_ucirepo(id=544)
@@ -29,15 +29,20 @@ df["NObeyesdad"] = y
 # 2. PREPARE DATA
 # ============================================================
 
-# Height and Weight are handled separately for BMI display.
+# Height and Weight are handled separately for BMI.
 # NObeyesdad is the target variable.
 
-X = df.drop(columns=["NObeyesdad", "Height", "Weight"])
+X = df.drop(
+    columns=["NObeyesdad", "Height", "Weight"]
+)
 
 y = df["NObeyesdad"]
 
 
-# Categorical columns
+# ============================================================
+# 3. FEATURE DEFINITIONS
+# ============================================================
+
 categorical_features = [
     "Gender",
     "family_history_with_overweight",
@@ -49,7 +54,6 @@ categorical_features = [
     "MTRANS"
 ]
 
-# Numerical columns
 numerical_features = [
     "Age",
     "FCVC",
@@ -61,18 +65,18 @@ numerical_features = [
 
 
 # ============================================================
-# 3. PREPROCESSING
+# 4. DATA PREPROCESSING
 # ============================================================
 
 preprocessor = ColumnTransformer(
     transformers=[
         (
-            "cat",
+            "categorical",
             OneHotEncoder(handle_unknown="ignore"),
             categorical_features
         ),
         (
-            "num",
+            "numerical",
             "passthrough",
             numerical_features
         )
@@ -81,7 +85,7 @@ preprocessor = ColumnTransformer(
 
 
 # ============================================================
-# 4. RANDOM FOREST MODEL
+# 5. RANDOM FOREST MODEL
 # ============================================================
 
 model = RandomForestClassifier(
@@ -90,7 +94,10 @@ model = RandomForestClassifier(
 )
 
 
-# Complete ML pipeline
+# ============================================================
+# 6. COMPLETE MACHINE LEARNING PIPELINE
+# ============================================================
+
 pipeline = Pipeline(
     steps=[
         ("preprocessor", preprocessor),
@@ -100,7 +107,7 @@ pipeline = Pipeline(
 
 
 # ============================================================
-# 5. TRAIN / TEST SPLIT
+# 7. TRAIN / TEST SPLIT
 # ============================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -113,14 +120,17 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 
 # ============================================================
-# 6. TRAIN MODEL
+# 8. TRAIN MODEL
 # ============================================================
 
-pipeline.fit(X_train, y_train)
+pipeline.fit(
+    X_train,
+    y_train
+)
 
 
 # ============================================================
-# 7. CLASS LABEL CONVERSION
+# 9. USER-FRIENDLY CLASS NAMES
 # ============================================================
 
 label_map = {
@@ -135,12 +145,13 @@ label_map = {
 
 
 # ============================================================
-# 8. BMI CALCULATION
+# 10. BMI CALCULATION
 # ============================================================
 
 def calculate_bmi(height, weight):
 
     try:
+
         height = float(height)
         weight = float(weight)
 
@@ -152,11 +163,12 @@ def calculate_bmi(height, weight):
         return round(bmi, 2)
 
     except:
+
         return None
 
 
 # ============================================================
-# 9. BMI GAUGE
+# 11. BMI GAUGE
 # ============================================================
 
 def create_bmi_gauge(bmi):
@@ -175,9 +187,11 @@ def create_bmi_gauge(bmi):
                 "axis": {
                     "range": [10, 50]
                 },
+
                 "bar": {
                     "thickness": 0.25
                 },
+
                 "steps": [
                     {
                         "range": [10, 18.5],
@@ -214,10 +228,13 @@ def create_bmi_gauge(bmi):
 
 
 # ============================================================
-# 10. PROBABILITY CHART
+# 12. PROBABILITY CHART
 # ============================================================
 
-def create_probability_chart(probabilities, classes):
+def create_probability_chart(
+    probabilities,
+    classes
+):
 
     display_classes = [
         label_map.get(c, c)
@@ -247,10 +264,13 @@ def create_probability_chart(probabilities, classes):
         title="Obesity Class Probability",
         xaxis_title="Obesity Category",
         yaxis_title="Probability (%)",
-        yaxis=dict(
-            range=[0, 100]
-        ),
+
+        yaxis={
+            "range": [0, 100]
+        },
+
         height=400,
+
         margin=dict(
             l=40,
             r=30,
@@ -263,7 +283,7 @@ def create_probability_chart(probabilities, classes):
 
 
 # ============================================================
-# 11. HABIT COACH
+# 13. HABIT COACH
 # ============================================================
 
 def generate_habit_coach(
@@ -281,98 +301,188 @@ def generate_habit_coach(
 
     recommendations = []
 
-    # High calorie food
+
+    # --------------------------------------------------------
+    # High-Calorie Food
+    # --------------------------------------------------------
+
     if favc == "Yes":
+
         recommendations.append(
-            "• Reduce frequent consumption of high-calorie foods and choose balanced meals."
+            "Prefer healthy snacks and avoid frequent unhealthy eating between meals."
         )
 
-    # Vegetable consumption
+
+    # --------------------------------------------------------
+    # Vegetable Consumption
+    # --------------------------------------------------------
+
     try:
+
         if float(fcvc) < 2:
+
             recommendations.append(
-                "• Increase vegetable consumption and include vegetables in your regular meals."
+                "Increase vegetable consumption and include vegetables in your regular meals."
             )
+
     except:
+
         pass
 
-    # Meals
+
+    # --------------------------------------------------------
+    # Number of Meals
+    # --------------------------------------------------------
+
     try:
+
         if float(ncp) < 3:
+
             recommendations.append(
-                "• Maintain regular and balanced main meals instead of skipping meals."
+                "Maintain regular and balanced main meals instead of skipping meals."
             )
+
     except:
+
         pass
 
-    # Food between meals
-    if caec in ["Sometimes", "Frequently", "Always"]:
+
+    # --------------------------------------------------------
+    # Food Between Meals
+    # --------------------------------------------------------
+
+    if caec in [
+        "Sometimes",
+        "Frequently",
+        "Always"
+    ]:
+
         recommendations.append(
-            "• Prefer healthy snacks and avoid frequent unhealthy eating between meals."
+            "Prefer healthy snacks and avoid frequent unhealthy eating between meals."
         )
 
-    # Water
+
+    # --------------------------------------------------------
+    # Water Consumption
+    # --------------------------------------------------------
+
     try:
+
         if float(ch2o) < 2:
+
             recommendations.append(
-                "• Increase your daily water intake and stay adequately hydrated."
+                "Increase your daily water intake and stay adequately hydrated."
             )
+
     except:
+
         pass
 
+
+    # --------------------------------------------------------
     # Smoking
+    # --------------------------------------------------------
+
     if smoke == "Yes":
+
         recommendations.append(
-            "• Consider reducing or avoiding smoking to support overall health."
+            "Consider reducing or avoiding smoking to support overall health."
         )
 
-    # Calorie monitoring
+
+    # --------------------------------------------------------
+    # Calorie Monitoring
+    # --------------------------------------------------------
+
     if scc == "No":
+
         recommendations.append(
-            "• Consider monitoring calorie intake to better understand your eating habits."
+            "Consider monitoring calorie intake to better understand your eating habits."
         )
 
+
+    # --------------------------------------------------------
     # Alcohol
-    if calc in ["Sometimes", "Frequently"]:
+    # --------------------------------------------------------
+
+    if calc in [
+        "Sometimes",
+        "Frequently"
+    ]:
+
         recommendations.append(
-            "• Limit alcohol consumption and maintain healthier beverage choices."
+            "Limit alcohol consumption and maintain healthier beverage choices."
         )
 
-    # Physical activity
+
+    # --------------------------------------------------------
+    # Physical Activity
+    # --------------------------------------------------------
+
     try:
+
         if float(faf) < 2:
+
             recommendations.append(
-                "• Gradually increase physical activity such as walking, cycling or exercise."
+                "Gradually increase physical activity such as walking, cycling or exercise."
             )
+
     except:
+
         pass
 
-    # Technology usage
+
+    # --------------------------------------------------------
+    # Technology Usage
+    # --------------------------------------------------------
+
     try:
+
         if float(tue) > 2:
+
             recommendations.append(
-                "• Reduce prolonged screen/device usage and take regular activity breaks."
+                "Reduce prolonged screen/device usage and take regular activity breaks."
             )
+
     except:
+
         pass
+
+
+    # --------------------------------------------------------
+    # Default Recommendation
+    # --------------------------------------------------------
 
     if not recommendations:
+
         recommendations.append(
-            "• Your current lifestyle inputs look relatively balanced. Continue maintaining healthy habits."
+            "Your current lifestyle inputs look relatively balanced. Continue maintaining healthy habits."
         )
+
+
+    # --------------------------------------------------------
+    # FORMAT OUTPUT
+    # --------------------------------------------------------
 
     recommendations_text = """
 ### Personalized Suggestions
 
 Based on your lifestyle answers:
 
-""" + "\n".join(recommendations)
+"""
+
+    for recommendation in recommendations:
+
+        recommendations_text += (
+            f"• {recommendation}\n\n"
+        )
+
 
     return recommendations_text
 
 
 # ============================================================
-# 12. ACTION PLAN
+# 14. ACTION PLAN
 # ============================================================
 
 def generate_action_plan(
@@ -386,91 +496,160 @@ def generate_action_plan(
 
     actions = []
 
+
+    # --------------------------------------------------------
     # Food
+    # --------------------------------------------------------
+
     if favc == "Yes":
+
         actions.append(
-            "1. Reduce high-calorie and highly processed foods."
-        )
-    else:
-        actions.append(
-            "1. Continue maintaining balanced food choices."
+            "Reduce high-calorie and highly processed foods."
         )
 
+    else:
+
+        actions.append(
+            "Continue maintaining balanced food choices."
+        )
+
+
+    # --------------------------------------------------------
     # Water
+    # --------------------------------------------------------
+
     try:
+
         if float(ch2o) < 2:
+
             actions.append(
-                "2. Increase daily water consumption."
+                "Increase daily water consumption."
             )
+
         else:
+
             actions.append(
-                "2. Continue maintaining adequate hydration."
+                "Continue maintaining adequate hydration."
             )
+
     except:
+
         actions.append(
-            "2. Maintain adequate daily water intake."
+            "Maintain adequate daily water intake."
         )
 
-    # Physical activity
+
+    # --------------------------------------------------------
+    # Physical Activity
+    # --------------------------------------------------------
+
     try:
+
         if float(faf) < 2:
+
             actions.append(
-                "3. Add regular physical activity to your daily routine."
+                "Add regular physical activity to your daily routine."
             )
+
         else:
+
             actions.append(
-                "3. Continue your regular physical activity."
+                "Continue your regular physical activity."
             )
+
     except:
+
         actions.append(
-            "3. Maintain a consistent physical activity routine."
+            "Maintain a consistent physical activity routine."
         )
 
-    # Screen time
+
+    # --------------------------------------------------------
+    # Screen Time
+    # --------------------------------------------------------
+
     try:
+
         if float(tue) > 2:
+
             actions.append(
-                "4. Reduce prolonged screen time and take movement breaks."
+                "Reduce prolonged screen time and take movement breaks."
             )
+
         else:
+
             actions.append(
-                "4. Continue maintaining reasonable screen/device usage."
+                "Continue maintaining reasonable screen/device usage."
             )
+
     except:
+
         actions.append(
-            "4. Take regular breaks from prolonged screen usage."
+            "Take regular breaks from prolonged screen usage."
         )
 
+
+    # --------------------------------------------------------
     # Smoking
+    # --------------------------------------------------------
+
     if smoke == "Yes":
+
         actions.append(
-            "5. Work toward reducing or avoiding smoking."
-        )
-    else:
-        actions.append(
-            "5. Continue avoiding smoking."
+            "Work toward reducing or avoiding smoking."
         )
 
-    # Alcohol
-    if calc in ["Sometimes", "Frequently"]:
-        actions.append(
-            "6. Limit alcohol consumption."
-        )
     else:
+
         actions.append(
-            "6. Continue maintaining responsible beverage choices."
+            "Continue avoiding smoking."
         )
+
+
+    # --------------------------------------------------------
+    # Alcohol
+    # --------------------------------------------------------
+
+    if calc in [
+        "Sometimes",
+        "Frequently"
+    ]:
+
+        actions.append(
+            "Limit alcohol consumption."
+        )
+
+    else:
+
+        actions.append(
+            "Continue maintaining responsible beverage choices."
+        )
+
+
+    # --------------------------------------------------------
+    # FORMAT ACTION PLAN
+    # --------------------------------------------------------
 
     action_text = """
 ### Your Personalized Action Plan
 
-""" + "\n".join(actions)
+"""
+
+    for number, action in enumerate(
+        actions,
+        start=1
+    ):
+
+        action_text += (
+            f"{number}. {action}\n\n"
+        )
+
 
     return action_text
 
 
 # ============================================================
-# 13. MAIN PREDICTION FUNCTION
+# 15. MAIN PREDICTION FUNCTION
 # ============================================================
 
 def predict_obesity(
@@ -498,9 +677,14 @@ def predict_obesity(
         # BMI
         # ----------------------------------------------------
 
-        bmi = calculate_bmi(height, weight)
+        bmi = calculate_bmi(
+            height,
+            weight
+        )
+
 
         if bmi is None:
+
             return (
                 "Please enter valid height and weight values.",
                 "",
@@ -513,42 +697,62 @@ def predict_obesity(
 
 
         # ----------------------------------------------------
-        # Prepare input data
+        # Prepare User Input
         # ----------------------------------------------------
 
         user_data = pd.DataFrame(
             [{
                 "Gender": gender,
+
                 "Age": float(age),
-                "family_history_with_overweight": family_history,
+
+                "family_history_with_overweight":
+                    family_history,
+
                 "FAVC": favc,
+
                 "FCVC": float(fcvc),
+
                 "NCP": float(ncp),
+
                 "CAEC": caec,
+
                 "SMOKE": smoke,
+
                 "CH2O": float(ch2o),
+
                 "SCC": scc,
+
                 "FAF": float(faf),
+
                 "TUE": float(tue),
+
                 "CALC": calc,
+
                 "MTRANS": mtrans
             }]
         )
 
 
         # ----------------------------------------------------
-        # Prediction
+        # Machine Learning Prediction
         # ----------------------------------------------------
 
-        prediction = pipeline.predict(user_data)[0]
+        prediction = pipeline.predict(
+            user_data
+        )[0]
 
-        probabilities = pipeline.predict_proba(user_data)[0]
+
+        probabilities = pipeline.predict_proba(
+            user_data
+        )[0]
+
 
         classes = pipeline.classes_
 
 
         # ----------------------------------------------------
-        # User-friendly prediction
+        # Convert Prediction to User-Friendly Name
         # ----------------------------------------------------
 
         predicted_label = label_map.get(
@@ -558,7 +762,7 @@ def predict_obesity(
 
 
         # ----------------------------------------------------
-        # Risk calculation
+        # Risk Calculation
         # ----------------------------------------------------
 
         healthy_classes = [
@@ -566,17 +770,25 @@ def predict_obesity(
             "Normal_Weight"
         ]
 
+
         risk_probability = sum(
+
             probabilities[i]
+
             for i, c in enumerate(classes)
+
             if c not in healthy_classes
+
         )
 
-        risk_percentage = risk_probability * 100
+
+        risk_percentage = (
+            risk_probability * 100
+        )
 
 
         # ----------------------------------------------------
-        # Prediction output
+        # Prediction Output
         # ----------------------------------------------------
 
         prediction_output = f"""
@@ -589,17 +801,29 @@ The machine-learning model predicts your most likely obesity category based on t
 
 
         # ----------------------------------------------------
-        # BMI output
+        # BMI Category
         # ----------------------------------------------------
 
         if bmi < 18.5:
+
             bmi_category = "Underweight"
+
         elif bmi < 25:
+
             bmi_category = "Normal"
+
         elif bmi < 30:
+
             bmi_category = "Overweight"
+
         else:
+
             bmi_category = "Obesity"
+
+
+        # ----------------------------------------------------
+        # BMI Output
+        # ----------------------------------------------------
 
         bmi_output = f"""
 ### BMI: **{bmi}**
@@ -609,7 +833,7 @@ The machine-learning model predicts your most likely obesity category based on t
 
 
         # ----------------------------------------------------
-        # Risk output
+        # Risk Output
         # ----------------------------------------------------
 
         risk_output = f"""
@@ -622,10 +846,13 @@ This value represents the model's estimated probability across the non-healthy o
 
 
         # ----------------------------------------------------
-        # Charts
+        # Create Charts
         # ----------------------------------------------------
 
-        bmi_chart = create_bmi_gauge(bmi)
+        bmi_chart = create_bmi_gauge(
+            bmi
+        )
+
 
         probability_chart = create_probability_chart(
             probabilities,
@@ -665,6 +892,10 @@ This value represents the model's estimated probability across the non-healthy o
         )
 
 
+        # ----------------------------------------------------
+        # Return Everything
+        # ----------------------------------------------------
+
         return (
             prediction_output,
             bmi_output,
@@ -690,7 +921,7 @@ This value represents the model's estimated probability across the non-healthy o
 
 
 # ============================================================
-# 14. CSS
+# 16. CSS
 # ============================================================
 
 CSS = """
@@ -707,22 +938,28 @@ body {
 
 """
 
+
 # ============================================================
-# 15. GRADIO INTERFACE
+# 17. GRADIO APPLICATION
 # ============================================================
 
 with gr.Blocks(
+
     title="AI/ML-Based Obesity Level Prediction and Personalized Habit Coaching System",
+
     css=CSS,
+
     theme=gr.themes.Soft()
+
 ) as demo:
 
 
-    # --------------------------------------------------------
-    # TITLE
-    # --------------------------------------------------------
+    # ========================================================
+    # MAIN TITLE
+    # ========================================================
 
     gr.HTML("""
+
     <div style="
         text-align:center;
         width:100%;
@@ -734,7 +971,10 @@ with gr.Blocks(
             font-weight:800;
             line-height:1.25;
         ">
-            🧠 AI/ML-Based Obesity Level Prediction and Personalized Habit Coaching System
+
+            🧠 AI/ML-Based Obesity Level Prediction
+            and Personalized Habit Coaching System
+
         </div>
 
         <div style="
@@ -742,141 +982,234 @@ with gr.Blocks(
             color:#64748b;
             margin-top:12px;
         ">
-            Predict obesity level and receive personalized lifestyle suggestions
+
+            Predict obesity level and receive personalized
+            lifestyle suggestions
+
         </div>
 
     </div>
+
     """)
 
 
     # ========================================================
-    # INPUT SECTION
+    # PERSONAL INFORMATION
     # ========================================================
 
-    gr.Markdown("## 👤 Personal Information")
+    gr.Markdown(
+        "## 👤 Personal Information"
+    )
+
 
     with gr.Row():
 
         gender = gr.Dropdown(
-            choices=["Male", "Female"],
+
+            choices=[
+                "Male",
+                "Female"
+            ],
+
             label="Gender",
+
             value="Male"
+
         )
+
 
         age = gr.Number(
+
             label="Age",
+
             value=22
+
         )
+
 
         height = gr.Number(
+
             label="Height (m)",
+
             value=1.70
+
         )
+
 
         weight = gr.Number(
+
             label="Weight (kg)",
+
             value=70
+
         )
 
 
-    gr.Markdown("## 🍎 Eating & Lifestyle Habits")
+    # ========================================================
+    # EATING & LIFESTYLE
+    # ========================================================
+
+    gr.Markdown(
+        "## 🍎 Eating & Lifestyle Habits"
+    )
 
 
     with gr.Row():
 
         family_history = gr.Radio(
-            ["yes", "no"],
+
+            choices=[
+                "yes",
+                "no"
+            ],
+
             label="Family History with Overweight",
+
             value="yes"
+
         )
+
 
         favc = gr.Radio(
-            ["Yes", "No"],
+
+            choices=[
+                "Yes",
+                "No"
+            ],
+
             label="Frequent High-Calorie Food",
+
             value="No"
+
         )
 
+
         fcvc = gr.Slider(
+
             minimum=1,
             maximum=3,
             value=2,
             step=0.1,
+
             label="Vegetable Consumption Frequency"
+
         )
 
+
         ncp = gr.Slider(
+
             minimum=1,
             maximum=4,
             value=3,
             step=0.1,
+
             label="Number of Main Meals"
+
         )
 
 
     with gr.Row():
 
         caec = gr.Dropdown(
+
             choices=[
                 "No",
                 "Sometimes",
                 "Frequently",
                 "Always"
             ],
+
             label="Food Between Meals",
+
             value="Sometimes"
+
         )
+
 
         smoke = gr.Radio(
-            ["Yes", "No"],
+
+            choices=[
+                "Yes",
+                "No"
+            ],
+
             label="Smoking",
+
             value="No"
+
         )
 
+
         ch2o = gr.Slider(
+
             minimum=1,
             maximum=3,
             value=2,
             step=0.1,
+
             label="Daily Water Consumption"
+
         )
 
+
         scc = gr.Radio(
-            ["Yes", "No"],
+
+            choices=[
+                "Yes",
+                "No"
+            ],
+
             label="Monitor Calorie Consumption",
+
             value="No"
+
         )
 
 
     with gr.Row():
 
         faf = gr.Slider(
+
             minimum=0,
             maximum=3,
             value=1,
             step=0.1,
+
             label="Physical Activity Frequency"
+
         )
 
+
         tue = gr.Slider(
+
             minimum=0,
             maximum=2,
             value=1,
             step=0.1,
+
             label="Technology Usage Time"
+
         )
 
+
         calc = gr.Dropdown(
+
             choices=[
                 "No",
                 "Sometimes",
                 "Frequently",
                 "Always"
             ],
+
             label="Alcohol Consumption",
+
             value="Sometimes"
+
         )
 
+
         mtrans = gr.Dropdown(
+
             choices=[
                 "Public_Transportation",
                 "Automobile",
@@ -884,8 +1217,11 @@ with gr.Blocks(
                 "Motorbike",
                 "Bike"
             ],
+
             label="Transportation",
+
             value="Public_Transportation"
+
         )
 
 
@@ -894,9 +1230,13 @@ with gr.Blocks(
     # ========================================================
 
     predict_button = gr.Button(
+
         "🔍 Predict Obesity Level",
+
         variant="primary",
+
         size="lg"
+
     )
 
 
@@ -904,31 +1244,47 @@ with gr.Blocks(
     # RESULTS
     # ========================================================
 
-    gr.Markdown("## 📊 Prediction Results")
+    gr.Markdown(
+        "## 📊 Prediction Results"
+    )
+
 
     with gr.Row():
 
         prediction_output = gr.Markdown(
+
             "Your prediction will appear here."
+
         )
+
 
         bmi_output = gr.Markdown(
+
             "Your BMI will appear here."
+
         )
 
+
         risk_output = gr.Markdown(
+
             "Your estimated risk will appear here."
+
         )
 
 
     with gr.Row():
 
         bmi_chart = gr.Plot(
+
             label="BMI Indicator"
+
         )
 
+
         probability_chart = gr.Plot(
+
             label="Prediction Probability"
+
         )
 
 
@@ -936,10 +1292,15 @@ with gr.Blocks(
     # HABIT COACH
     # ========================================================
 
-    gr.Markdown("## 🧠 Simple Habit Coach")
+    gr.Markdown(
+        "## 🧠 Simple Habit Coach"
+    )
+
 
     habit_output = gr.Markdown(
+
         "Your personalized suggestions will appear here."
+
     )
 
 
@@ -947,21 +1308,28 @@ with gr.Blocks(
     # ACTION PLAN
     # ========================================================
 
-    gr.Markdown("## 🏃 Your Action Plan")
+    gr.Markdown(
+        "## 🏃 Your Action Plan"
+    )
+
 
     action_output = gr.Markdown(
+
         "Your personalized action plan will appear here."
+
     )
 
 
     # ========================================================
-    # BUTTON FUNCTION
+    # CONNECT BUTTON TO PREDICTION FUNCTION
     # ========================================================
 
     predict_button.click(
+
         fn=predict_obesity,
 
         inputs=[
+
             gender,
             age,
             height,
@@ -978,9 +1346,11 @@ with gr.Blocks(
             tue,
             calc,
             mtrans
+
         ],
 
         outputs=[
+
             prediction_output,
             bmi_output,
             risk_output,
@@ -988,19 +1358,27 @@ with gr.Blocks(
             probability_chart,
             habit_output,
             action_output
+
         ]
+
     )
 
 
 # ============================================================
-# 16. RUN APPLICATION
+# 18. RUN APPLICATION
 # ============================================================
 
 if __name__ == "__main__":
 
     demo.launch(
+
         server_name="0.0.0.0",
+
         server_port=int(
-            os.environ.get("PORT", 7860)
+            os.environ.get(
+                "PORT",
+                7860
+            )
         )
+
     )
