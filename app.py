@@ -19,7 +19,7 @@ from sklearn.metrics import accuracy_score
 
 
 # ============================================
-# 1. LOAD DATASET
+# LOAD DATASET
 # ============================================
 
 print("Loading UCI Obesity dataset...")
@@ -36,7 +36,7 @@ print("Dataset shape:", df.shape)
 
 
 # ============================================
-# 2. PREPARE DATA
+# PREPARE DATA
 # ============================================
 
 X = df.drop(
@@ -71,7 +71,7 @@ preprocessor = ColumnTransformer(
 
 
 # ============================================
-# 3. RANDOM FOREST MODEL
+# RANDOM FOREST MODEL
 # ============================================
 
 model = Pipeline([
@@ -119,7 +119,7 @@ print(
 
 
 # ============================================
-# 4. SETTINGS
+# SETTINGS
 # ============================================
 
 HEALTHY = [
@@ -140,7 +140,7 @@ PRETTY = {
 
 
 # ============================================
-# 5. BMI FUNCTIONS
+# BMI FUNCTIONS
 # ============================================
 
 def bmi_category(bmi):
@@ -177,7 +177,7 @@ def risk_level(risk):
 
 
 # ============================================
-# 6. INPUT CONVERSION FUNCTIONS
+# INPUT CONVERSION FUNCTIONS
 # ============================================
 
 def convert_fcvc(value):
@@ -273,7 +273,7 @@ def convert_transport(value):
 
 
 # ============================================
-# 7. CREATE MODEL INPUT ROW
+# CREATE MODEL INPUT ROW
 # ============================================
 
 def make_row(
@@ -341,7 +341,7 @@ def make_row(
 
 
 # ============================================
-# 8. CALCULATE MODEL RISK
+# RISK CALCULATION
 # ============================================
 
 def risk_of(row):
@@ -349,9 +349,15 @@ def risk_of(row):
     probabilities = model.predict_proba(row)[0]
 
     risk = sum(
+
         probability
+
         for class_name, probability
-        in zip(model.classes_, probabilities)
+        in zip(
+            model.classes_,
+            probabilities
+        )
+
         if class_name not in HEALTHY
     )
 
@@ -359,26 +365,44 @@ def risk_of(row):
 
 
 # ============================================
-# 9. HABIT COACH
+# HABIT COACH
 # ============================================
 
 def habit_coach(row):
 
     recommendations = []
 
-    faf = float(row["FAF"].iloc[0])
-    fcvc = float(row["FCVC"].iloc[0])
-    favc = str(row["FAVC"].iloc[0]).lower()
-    caec = str(row["CAEC"].iloc[0]).lower()
-    ch2o = float(row["CH2O"].iloc[0])
-    tue = float(row["TUE"].iloc[0])
+    faf = float(
+        row["FAF"].iloc[0]
+    )
+
+    fcvc = float(
+        row["FCVC"].iloc[0]
+    )
+
+    favc = str(
+        row["FAVC"].iloc[0]
+    ).lower()
+
+    caec = str(
+        row["CAEC"].iloc[0]
+    ).lower()
+
+    ch2o = float(
+        row["CH2O"].iloc[0]
+    )
+
+    tue = float(
+        row["TUE"].iloc[0]
+    )
 
 
     if faf < 2:
 
         recommendations.append(
             "🏃 **Increase physical activity:** "
-            "Try walking, cycling, or exercising for 20–30 minutes regularly."
+            "Try walking, cycling, or exercising "
+            "for 20–30 minutes regularly."
         )
 
     else:
@@ -408,7 +432,8 @@ def habit_coach(row):
 
         recommendations.append(
             "🍔 **Reduce high-calorie foods:** "
-            "Limit junk food, fried food, and highly processed foods."
+            "Limit junk food, fried food, and "
+            "highly processed foods."
         )
 
     else:
@@ -423,7 +448,8 @@ def habit_coach(row):
 
         recommendations.append(
             "💧 **Drink more water:** "
-            "Try to maintain regular hydration throughout the day."
+            "Try to maintain regular hydration "
+            "throughout the day."
         )
 
     else:
@@ -453,7 +479,8 @@ def habit_coach(row):
 
         recommendations.append(
             "📱 **Reduce screen time:** "
-            "Take regular breaks and include more physical movement."
+            "Take regular breaks and include more "
+            "physical movement."
         )
 
     else:
@@ -468,27 +495,35 @@ def habit_coach(row):
 
 
 # ============================================
-# 10. ACTION PLAN
+# ACTION PLAN
 # ============================================
 
-def create_action_plan(
-    row,
-    bmi,
-    prediction
-):
+def create_action_plan(row, bmi, prediction):
 
     actions = []
 
-    faf = float(row["FAF"].iloc[0])
-    fcvc = float(row["FCVC"].iloc[0])
-    favc = str(row["FAVC"].iloc[0]).lower()
-    ch2o = float(row["CH2O"].iloc[0])
+    faf = float(
+        row["FAF"].iloc[0]
+    )
+
+    fcvc = float(
+        row["FCVC"].iloc[0]
+    )
+
+    favc = str(
+        row["FAVC"].iloc[0]
+    ).lower()
+
+    ch2o = float(
+        row["CH2O"].iloc[0]
+    )
 
 
     if faf < 2:
 
         actions.append(
-            "🏃 Start with 20–30 minutes of walking or light exercise regularly."
+            "🏃 Start with 20–30 minutes of "
+            "walking or light exercise regularly."
         )
 
     else:
@@ -514,7 +549,8 @@ def create_action_plan(
     if favc == "yes":
 
         actions.append(
-            "🍔 Reduce frequent high-calorie and highly processed foods."
+            "🍔 Reduce frequent high-calorie "
+            "and highly processed foods."
         )
 
     else:
@@ -527,7 +563,8 @@ def create_action_plan(
     if ch2o < 2:
 
         actions.append(
-            "💧 Increase water intake gradually and stay hydrated."
+            "💧 Increase water intake gradually "
+            "and stay hydrated."
         )
 
     else:
@@ -541,7 +578,7 @@ def create_action_plan(
 
 
 # ============================================
-# 11. PROBABILITY CHART
+# PROBABILITY CHART
 # ============================================
 
 def create_probability_chart(
@@ -572,8 +609,12 @@ def create_probability_chart(
 
 
     probability_data = sorted(
+
         probability_data,
-        key=lambda x: x["probability"],
+
+        key=lambda x:
+            x["probability"],
+
         reverse=True
     )
 
@@ -582,7 +623,6 @@ def create_probability_chart(
         item["class"]
         for item in probability_data
     ]
-
 
     values = [
         item["probability"]
@@ -594,6 +634,7 @@ def create_probability_chart(
 
 
     fig.add_trace(
+
         go.Bar(
 
             x=values,
@@ -609,10 +650,11 @@ def create_probability_chart(
 
             textposition="outside",
 
-            hovertemplate=
+            hovertemplate=(
                 "<b>%{y}</b><br>"
                 "Probability: %{x:.1f}%"
                 "<extra></extra>"
+            )
 
         )
     )
@@ -628,9 +670,13 @@ def create_probability_chart(
 
         xaxis={
             "title": "Probability (%)",
+
             "range": [
                 0,
-                max(100, max(values) + 12)
+                max(
+                    100,
+                    max(values) + 12
+                )
             ]
         },
 
@@ -657,7 +703,7 @@ def create_probability_chart(
 
 
 # ============================================
-# 12. BMI GAUGE
+# BMI GAUGE
 # ============================================
 
 def create_bmi_chart(bmi):
@@ -671,7 +717,8 @@ def create_bmi_chart(bmi):
             value=bmi,
 
             title={
-                "text": "Body Mass Index (BMI)"
+                "text":
+                    "Body Mass Index (BMI)"
             },
 
             gauge={
@@ -717,9 +764,7 @@ def create_bmi_chart(bmi):
                     }
 
                 ]
-
             }
-
         )
     )
 
@@ -729,7 +774,6 @@ def create_bmi_chart(bmi):
         height=350,
 
         template="plotly_white"
-
     )
 
 
@@ -737,7 +781,7 @@ def create_bmi_chart(bmi):
 
 
 # ============================================
-# 13. MAIN PREDICTION FUNCTION
+# MAIN PREDICTION
 # ============================================
 
 def run_prediction(
@@ -782,7 +826,6 @@ def run_prediction(
         tue,
         calc,
         mtrans
-
     )
 
 
@@ -800,7 +843,6 @@ def run_prediction(
         probabilities,
 
         model.classes_
-
     )
 
 
@@ -813,11 +855,8 @@ def run_prediction(
     actions = create_action_plan(
 
         row,
-
         bmi,
-
         prediction
-
     )
 
 
@@ -830,13 +869,19 @@ def run_prediction(
             ),
 
         "bmi":
-            round(bmi, 2),
+            round(
+                bmi,
+                2
+            ),
 
         "bmi_category":
             bmi_cat,
 
         "risk":
-            round(risk * 100, 2),
+            round(
+                risk * 100,
+                2
+            ),
 
         "risk_category":
             risk_cat,
@@ -852,12 +897,11 @@ def run_prediction(
 
         "actions":
             actions
-
     }
 
 
 # ============================================
-# 14. DISPLAY RESULTS
+# DISPLAY RESULTS
 # ============================================
 
 def predict_and_display(
@@ -922,9 +966,12 @@ def predict_and_display(
             mtrans,
             height,
             weight
-
         )
 
+
+        # ----------------------------
+        # PREDICTION
+        # ----------------------------
 
         prediction_text = f"""
 ## 🎯 Predicted Obesity Level
@@ -935,6 +982,10 @@ The AI model's most likely classification based on the information provided.
 """
 
 
+        # ----------------------------
+        # BMI
+        # ----------------------------
+
         bmi_text = f"""
 ## ⚖️ BMI
 
@@ -944,6 +995,10 @@ The AI model's most likely classification based on the information provided.
 """
 
 
+        # ----------------------------
+        # RISK
+        # ----------------------------
+
         risk_text = f"""
 ## 📈 Overall Risk
 
@@ -951,14 +1006,17 @@ The AI model's most likely classification based on the information provided.
 
 **Risk Level:** {result["risk_category"]}
 
-This represents the model's estimated probability of being in an
-overweight or obesity category.
+This represents the model's estimated probability of being in an overweight or obesity category.
 """
 
 
-        recommendations_text = """
-## 🧠 Simple Habit Coach
+        # ----------------------------
+        # HABIT COACH
+        # IMPORTANT:
+        # No duplicate heading here.
+        # ----------------------------
 
+        recommendations_text = """
 Based on your lifestyle answers:
 
 """
@@ -971,10 +1029,13 @@ Based on your lifestyle answers:
             )
 
 
-        action_text = """
-## 🏃 Your Action Plan
+        # ----------------------------
+        # ACTION PLAN
+        # IMPORTANT:
+        # No duplicate heading here.
+        # ----------------------------
 
-"""
+        action_text = ""
 
 
         for i, action in enumerate(
@@ -1002,7 +1063,6 @@ Based on your lifestyle answers:
             recommendations_text,
 
             action_text
-
         )
 
 
@@ -1036,44 +1096,61 @@ Please check your inputs and try again.
             error_message,
 
             error_message
-
         )
 
 
 # ============================================
-# 15. CSS
+# CSS
 # ============================================
 
 CSS = """
 
 body {
+
     background: #f5f7fb;
+
 }
+
 
 .gradio-container {
+
     max-width: 1200px !important;
+
     margin: auto !important;
+
 }
+
 
 .main-title {
+
     text-align: center;
+
     font-size: 34px;
+
     font-weight: 700;
+
     margin-bottom: 5px;
+
 }
 
+
 .subtitle {
+
     text-align: center;
+
     color: #64748b;
+
     font-size: 16px;
+
     margin-bottom: 25px;
+
 }
 
 """
 
 
 # ============================================
-# 16. GRADIO INTERFACE
+# GRADIO INTERFACE
 # ============================================
 
 with gr.Blocks(
@@ -1087,24 +1164,31 @@ with gr.Blocks(
 ) as demo:
 
 
-    gr.Markdown(
-        """
+    gr.Markdown("""
+
         <div class="main-title">
+
             🧠 AI Obesity Level Predictor
+
         </div>
 
         <div class="subtitle">
-            Predict obesity level and receive personalized lifestyle suggestions
+
+            Predict obesity level and receive
+            personalized lifestyle suggestions
+
         </div>
-        """
-    )
+
+    """)
 
 
-    # ----------------------------------------
+    # ========================================
     # PERSONAL INFORMATION
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 👤 Personal Information")
+    gr.Markdown(
+        "## 👤 Personal Information"
+    )
 
 
     with gr.Row():
@@ -1119,7 +1203,6 @@ with gr.Blocks(
             label="Gender",
 
             value="Male"
-
         )
 
 
@@ -1132,7 +1215,6 @@ with gr.Blocks(
             minimum=10,
 
             maximum=100
-
         )
 
 
@@ -1146,15 +1228,16 @@ with gr.Blocks(
             label="Family history of overweight",
 
             value="No"
-
         )
 
 
-    # ----------------------------------------
+    # ========================================
     # BODY MEASUREMENTS
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 📏 Body Measurements")
+    gr.Markdown(
+        "## 📏 Body Measurements"
+    )
 
 
     with gr.Row():
@@ -1168,7 +1251,6 @@ with gr.Blocks(
             minimum=1.0,
 
             maximum=2.5
-
         )
 
 
@@ -1181,21 +1263,20 @@ with gr.Blocks(
             minimum=20,
 
             maximum=250
-
         )
 
 
-    # ----------------------------------------
+    # ========================================
     # EATING HABITS
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 🍽️ Eating Habits")
+    gr.Markdown(
+        "## 🍽️ Eating Habits"
+    )
 
 
     gr.Markdown(
-        """
-        **Answer according to your usual daily habits.**
-        """
+        "**Answer according to your usual daily habits.**"
     )
 
 
@@ -1211,7 +1292,6 @@ with gr.Blocks(
             label="🍔 Do you frequently eat high-calorie food?",
 
             value="No"
-
         )
 
 
@@ -1226,7 +1306,6 @@ with gr.Blocks(
             label="🥗 How often do you eat vegetables?",
 
             value="Sometimes"
-
         )
 
 
@@ -1235,44 +1314,40 @@ with gr.Blocks(
         ncp = gr.Dropdown(
 
             choices=[
-
                 "1 main meal",
                 "2 main meals",
                 "3 main meals",
                 "4 or more main meals"
-
             ],
 
             label="🍽️ How many main meals do you usually eat?",
 
             value="3 main meals"
-
         )
 
 
         caec = gr.Radio(
 
             choices=[
-
                 "Never",
                 "Sometimes",
                 "Frequently",
                 "Always"
-
             ],
 
             label="🍎 How often do you snack between meals?",
 
             value="Sometimes"
-
         )
 
 
-    # ----------------------------------------
+    # ========================================
     # LIFESTYLE
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 🏃 Lifestyle")
+    gr.Markdown(
+        "## 🏃 Lifestyle"
+    )
 
 
     with gr.Row():
@@ -1287,24 +1362,20 @@ with gr.Blocks(
             label="🚬 Do you smoke?",
 
             value="No"
-
         )
 
 
         ch2o = gr.Radio(
 
             choices=[
-
                 "Less than 1 L/day",
                 "1–2 L/day",
                 "More than 2 L/day"
-
             ],
 
             label="💧 How much water do you drink daily?",
 
             value="1–2 L/day"
-
         )
 
 
@@ -1318,7 +1389,6 @@ with gr.Blocks(
             label="📊 Do you monitor your calorie intake?",
 
             value="No"
-
         )
 
 
@@ -1327,35 +1397,29 @@ with gr.Blocks(
         faf = gr.Radio(
 
             choices=[
-
                 "No regular activity",
                 "1–2 days/week",
                 "3–4 days/week",
                 "5+ days/week"
-
             ],
 
             label="🏋️ How often are you physically active?",
 
             value="1–2 days/week"
-
         )
 
 
         tue = gr.Radio(
 
             choices=[
-
                 "Less than 1 hour/day",
                 "1–2 hours/day",
                 "More than 2 hours/day"
-
             ],
 
             label="📱 How much time do you spend using technology/screen?",
 
             value="1–2 hours/day"
-
         )
 
 
@@ -1364,43 +1428,37 @@ with gr.Blocks(
         calc = gr.Radio(
 
             choices=[
-
                 "Never",
                 "Sometimes",
                 "Frequently",
                 "Always"
-
             ],
 
             label="🍺 How often do you consume alcohol?",
 
             value="Never"
-
         )
 
 
         mtrans = gr.Dropdown(
 
             choices=[
-
                 "Walking",
                 "Bike",
                 "Public Transportation",
                 "Motorbike",
                 "Automobile"
-
             ],
 
             label="🚶 What is your main mode of transportation?",
 
             value="Public Transportation"
-
         )
 
 
-    # ----------------------------------------
-    # BUTTON
-    # ----------------------------------------
+    # ========================================
+    # PREDICT BUTTON
+    # ========================================
 
     predict_button = gr.Button(
 
@@ -1409,46 +1467,48 @@ with gr.Blocks(
         variant="primary",
 
         size="lg"
-
     )
 
 
-    # ----------------------------------------
-    # RESULTS
-    # ----------------------------------------
-
     gr.Markdown("---")
 
-    gr.Markdown("## 📊 Prediction Results")
+
+    # ========================================
+    # PREDICTION RESULTS
+    # ========================================
+
+    gr.Markdown(
+        "## 📊 Prediction Results"
+    )
 
 
     with gr.Row():
 
-        result_prediction = gr.Markdown(
-            """
+        result_prediction = gr.Markdown("""
+
             ### 🎯 Predicted Level
 
             **Waiting for prediction...**
-            """
-        )
+
+        """)
 
 
-        result_bmi = gr.Markdown(
-            """
+        result_bmi = gr.Markdown("""
+
             ### ⚖️ BMI
 
             **Waiting for prediction...**
-            """
-        )
+
+        """)
 
 
-        result_risk = gr.Markdown(
-            """
+        result_risk = gr.Markdown("""
+
             ### 📈 Overall Risk
 
             **Waiting for prediction...**
-            """
-        )
+
+        """)
 
 
     with gr.Row():
@@ -1463,33 +1523,43 @@ with gr.Blocks(
         )
 
 
-    # ----------------------------------------
+    # ========================================
     # HABIT COACH
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 🧠 Simple Habit Coach")
+    gr.Markdown(
+        "## 🧠 Simple Habit Coach"
+    )
 
 
     habit_output = gr.Markdown(
-        "Your personalized suggestions will appear here."
+
+        "Your personalized suggestions "
+        "will appear here."
+
     )
 
 
-    # ----------------------------------------
+    # ========================================
     # ACTION PLAN
-    # ----------------------------------------
+    # ========================================
 
-    gr.Markdown("## 🏃 Your Action Plan")
+    gr.Markdown(
+        "## 🏃 Your Action Plan"
+    )
 
 
     action_output = gr.Markdown(
-        "Your personalized action plan will appear here."
+
+        "Your personalized action plan "
+        "will appear here."
+
     )
 
 
-    # ----------------------------------------
-    # BUTTON CONNECTION
-    # ----------------------------------------
+    # ========================================
+    # BUTTON FUNCTION
+    # ========================================
 
     predict_button.click(
 
@@ -1519,11 +1589,17 @@ with gr.Blocks(
         outputs=[
 
             result_prediction,
+
             result_bmi,
+
             result_risk,
+
             bmi_output,
+
             probability_output,
+
             habit_output,
+
             action_output
 
         ]
@@ -1532,12 +1608,23 @@ with gr.Blocks(
 
 
 # ============================================
-# 17. LAUNCH
+# APPLICATION START
 # ============================================
 
-print("Application created successfully!")
+print(
+    "Application created successfully!"
+)
+
 
 demo.launch(
+
     server_name="0.0.0.0",
-    server_port=int(os.environ.get("PORT", 7860))
+
+    server_port=int(
+        os.environ.get(
+            "PORT",
+            7860
+        )
+    )
+
 )
