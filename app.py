@@ -178,58 +178,87 @@ def create_bmi_gauge(bmi):
         return go.Figure()
 
     fig = go.Figure(
+
         go.Indicator(
+
             mode="gauge+number",
+
             value=bmi,
 
             title={
                 "text": "BMI",
                 "font": {
-                    "size": 22
+                    "color": "#111827",
+                    "size": 22,
+                    "family": "Arial, sans-serif"
                 }
             },
 
             number={
                 "font": {
-                    "size": 40
+                    "color": "#111827",
+                    "size": 42,
+                    "family": "Arial, sans-serif"
                 }
             },
 
             gauge={
 
                 "axis": {
+
                     "range": [10, 50],
 
                     "tickfont": {
-                        "size": 14
+                        "color": "#111827",
+                        "size": 13,
+                        "family": "Arial, sans-serif"
                     },
 
-                    "tickwidth": 1
+                    "tickcolor": "#111827",
+
+                    "tickwidth": 1,
+
+                    "linecolor": "#6b7280",
+
+                    "linewidth": 1
+
                 },
 
                 "bar": {
+
+                    "color": "#2563eb",
+
                     "thickness": 0.25
+
                 },
+
+                "bordercolor": "#6b7280",
+
+                "borderwidth": 1,
 
                 "steps": [
 
                     {
                         "range": [10, 18.5],
+                        "color": "#dbeafe",
                         "name": "Underweight"
                     },
 
                     {
                         "range": [18.5, 25],
+                        "color": "#dcfce7",
                         "name": "Normal"
                     },
 
                     {
                         "range": [25, 30],
+                        "color": "#fef3c7",
                         "name": "Overweight"
                     },
 
                     {
                         "range": [30, 50],
+                        "color": "#fee2e2",
                         "name": "Obesity"
                     }
 
@@ -238,6 +267,7 @@ def create_bmi_gauge(bmi):
             }
 
         )
+
     )
 
     fig.update_layout(
@@ -251,12 +281,16 @@ def create_bmi_gauge(bmi):
             b=30
         ),
 
-        paper_bgcolor="rgba(0,0,0,0)",
+        # Fixed chart background.
+        # This prevents browser/theme conflicts.
 
-        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="#ffffff",
+
+        plot_bgcolor="#ffffff",
 
         font={
-            "size": 14
+            "color": "#111827",
+            "family": "Arial, sans-serif"
         }
 
     )
@@ -300,6 +334,21 @@ def create_probability_chart(
 
                 textposition="auto",
 
+                textfont={
+                    "color": "#111827",
+                    "size": 13,
+                    "family": "Arial, sans-serif"
+                },
+
+                marker={
+                    "color": "#2563eb",
+
+                    "line": {
+                        "color": "#1d4ed8",
+                        "width": 1
+                    }
+                },
+
                 hovertemplate=(
                     "<b>%{x}</b><br>"
                     "Probability: %{y:.1f}%"
@@ -315,22 +364,46 @@ def create_probability_chart(
     fig.update_layout(
 
         title={
+
             "text": "Obesity Class Probability",
 
             "font": {
-                "size": 22
+                "color": "#111827",
+                "size": 22,
+                "family": "Arial, sans-serif"
             }
+
         },
 
         xaxis={
 
             "title": {
-                "text": "Obesity Category"
+
+                "text": "Obesity Category",
+
+                "font": {
+                    "color": "#111827",
+                    "size": 14,
+                    "family": "Arial, sans-serif"
+                }
+
             },
 
             "tickfont": {
-                "size": 12
+
+                "color": "#111827",
+                "size": 11,
+                "family": "Arial, sans-serif"
+
             },
+
+            "tickcolor": "#111827",
+
+            "linecolor": "#6b7280",
+
+            "linewidth": 1,
+
+            "gridcolor": "#e5e7eb",
 
             "automargin": True
 
@@ -339,14 +412,34 @@ def create_probability_chart(
         yaxis={
 
             "title": {
-                "text": "Probability (%)"
+
+                "text": "Probability (%)",
+
+                "font": {
+                    "color": "#111827",
+                    "size": 14,
+                    "family": "Arial, sans-serif"
+                }
+
             },
 
             "range": [0, 100],
 
             "tickfont": {
-                "size": 12
-            }
+
+                "color": "#111827",
+                "size": 12,
+                "family": "Arial, sans-serif"
+
+            },
+
+            "tickcolor": "#111827",
+
+            "linecolor": "#6b7280",
+
+            "linewidth": 1,
+
+            "gridcolor": "#e5e7eb"
 
         },
 
@@ -359,18 +452,37 @@ def create_probability_chart(
             b=125
         ),
 
-        paper_bgcolor="rgba(0,0,0,0)",
+        # Fixed white chart background.
+        # This is the important Chrome compatibility fix.
 
-        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="#ffffff",
+
+        plot_bgcolor="#ffffff",
 
         font={
-            "size": 14
+
+            "color": "#111827",
+
+            "family": "Arial, sans-serif"
+
         },
 
         hoverlabel={
+
+            "bgcolor": "#ffffff",
+
+            "bordercolor": "#6b7280",
+
             "font": {
-                "size": 13
+
+                "color": "#111827",
+
+                "size": 13,
+
+                "family": "Arial, sans-serif"
+
             }
+
         }
 
     )
@@ -987,14 +1099,18 @@ CSS = """
    ========================================================= */
 
 .gradio-container {
+
     max-width: 1200px !important;
+
     margin: auto !important;
+
     padding-top: 20px !important;
+
 }
 
 
 /* =========================================================
-   THEME-COMPATIBLE INFORMATION CARDS
+   INFORMATION CARDS
    ========================================================= */
 
 .app-info-card {
@@ -1190,6 +1306,19 @@ CSS = """
     color: var(--body-text-color);
 
     line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   PLOTLY CHART CONTAINER
+   ========================================================= */
+
+.gradio-plot {
+
+    background: #ffffff !important;
+
+    border-radius: 10px !important;
 
 }
 
