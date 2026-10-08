@@ -28,7 +28,7 @@ df["NObeyesdad"] = y
 # 2. MODEL FEATURES
 # ============================================================
 
-# Height and Weight are kept for BMI calculation only.
+# Height and Weight are used separately for BMI calculation.
 X = df.drop(columns=["NObeyesdad", "Height", "Weight"])
 y = df["NObeyesdad"]
 
@@ -108,7 +108,7 @@ pipeline.fit(X_train, y_train)
 
 
 # ============================================================
-# 6. LABELS
+# 6. FRIENDLY LABELS
 # ============================================================
 
 friendly_labels = {
@@ -153,7 +153,7 @@ def get_bmi_category(bmi):
 
 
 # ============================================================
-# 8. SIMPLE BMI DISPLAY
+# 8. BMI DISPLAY
 # ============================================================
 
 def create_bmi_html(bmi):
@@ -177,70 +177,25 @@ def create_bmi_html(bmi):
         category_color = "#dc2626"
 
     return f"""
-    <div style="
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        padding:18px;
-        background:white;
-        margin-top:10px;
-    ">
+    <div class="bmi-card">
 
-        <div style="
-            font-size:28px;
-            font-weight:bold;
-            color:#111827;
-        ">
+        <div class="bmi-number">
             BMI: {bmi:.1f}
         </div>
 
-        <div style="
-            margin-top:5px;
-            font-size:18px;
-            font-weight:bold;
-            color:{category_color};
-        ">
+        <div class="bmi-category" style="color:{category_color};">
             {category}
         </div>
 
-        <div style="
-            position:relative;
-            margin-top:20px;
-            height:22px;
-            border-radius:5px;
-            overflow:hidden;
-            background:linear-gradient(
-                to right,
-                #93c5fd 0%,
-                #93c5fd 25%,
-                #86efac 25%,
-                #86efac 50%,
-                #fde047 50%,
-                #fde047 75%,
-                #fca5a5 75%,
-                #fca5a5 100%
-            );
-        ">
+        <div class="bmi-scale">
 
-            <div style="
-                position:absolute;
-                left:{position}%;
-                top:-5px;
-                width:4px;
-                height:32px;
-                background:#111827;
-                border-radius:2px;
-            ">
+            <div class="bmi-marker"
+                 style="left:{position}%;">
             </div>
 
         </div>
 
-        <div style="
-            display:flex;
-            justify-content:space-between;
-            font-size:12px;
-            color:#374151;
-            margin-top:7px;
-        ">
+        <div class="bmi-labels">
             <span>Underweight</span>
             <span>Normal</span>
             <span>Overweight</span>
@@ -257,8 +212,6 @@ def create_bmi_html(bmi):
 
 def create_probability_html(probabilities, classes):
 
-    rows = ""
-
     probability_data = []
 
     for cls, probability in zip(classes, probabilities):
@@ -274,18 +227,14 @@ def create_probability_html(probabilities, classes):
         reverse=True
     )
 
+    rows = ""
+
     for label, probability in probability_data:
 
         rows += f"""
-        <div style="margin-bottom:12px;">
+        <div class="probability-row">
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                margin-bottom:4px;
-                font-size:14px;
-                color:#111827;
-            ">
+            <div class="probability-header">
 
                 <span>{label}</span>
 
@@ -293,20 +242,10 @@ def create_probability_html(probabilities, classes):
 
             </div>
 
-            <div style="
-                width:100%;
-                height:10px;
-                background:#e5e7eb;
-                border-radius:5px;
-                overflow:hidden;
-            ">
+            <div class="probability-track">
 
-                <div style="
-                    width:{probability}%;
-                    height:100%;
-                    background:#2563eb;
-                    border-radius:5px;
-                ">
+                <div class="probability-fill"
+                     style="width:{probability}%;">
                 </div>
 
             </div>
@@ -315,13 +254,7 @@ def create_probability_html(probabilities, classes):
         """
 
     return f"""
-    <div style="
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        padding:18px;
-        background:white;
-        margin-top:10px;
-    ">
+    <div class="probability-card">
 
         {rows}
 
@@ -347,55 +280,46 @@ def generate_habit_coach(
 
     suggestions = []
 
-    # Vegetable intake
     if fcvc < 2:
         suggestions.append(
             "Increase vegetable and fruit intake."
         )
 
-    # Meals
     if ncp < 3:
         suggestions.append(
             "Try to maintain regular and balanced meals."
         )
 
-    # Water
     if ch2o < 2:
         suggestions.append(
             "Increase daily water intake."
         )
 
-    # Physical activity
     if faf < 2:
         suggestions.append(
             "Increase regular physical activity such as walking, cycling or exercise."
         )
 
-    # Technology usage
     if tue > 2:
         suggestions.append(
             "Reduce unnecessary screen and sedentary time."
         )
 
-    # High calorie food
     if favc == "yes":
         suggestions.append(
             "Reduce frequent consumption of high-calorie foods."
         )
 
-    # Eating between meals
     if caec == "Always":
         suggestions.append(
             "Reduce frequent snacking between meals."
         )
 
-    # Smoking
     if smoke == "yes":
         suggestions.append(
             "Consider reducing or avoiding smoking."
         )
 
-    # Alcohol
     if calc in ["Frequently", "Always"]:
         suggestions.append(
             "Reduce frequent alcohol consumption."
@@ -407,10 +331,10 @@ def generate_habit_coach(
             "Continue maintaining healthy eating and activity habits."
         )
 
-    result = "### Habit Suggestions\n\n"
+    result = ""
 
     for suggestion in suggestions:
-        result += f"- {suggestion}\n"
+        result += f"• {suggestion}\n\n"
 
     return result
 
@@ -507,37 +431,45 @@ def predict_obesity(
     mtrans
 ):
 
-    # -----------------------------
-    # Validate input
-    # -----------------------------
-
     if height is None or weight is None:
+
         return (
-            "Please enter height and weight.",
+            """
+            <div class="error-box">
+                Please enter height and weight.
+            </div>
+            """,
+            "",
             "",
             "",
             ""
         )
 
     if height <= 0 or weight <= 0:
+
         return (
-            "Please enter valid height and weight values.",
+            """
+            <div class="error-box">
+                Please enter valid height and weight values.
+            </div>
+            """,
+            "",
             "",
             "",
             ""
         )
 
-    # -----------------------------
+    # --------------------------------------------------------
     # BMI
-    # -----------------------------
+    # --------------------------------------------------------
 
     bmi = calculate_bmi(height, weight)
 
     bmi_html = create_bmi_html(bmi)
 
-    # -----------------------------
-    # Prepare model input
-    # -----------------------------
+    # --------------------------------------------------------
+    # MODEL INPUT
+    # --------------------------------------------------------
 
     user_data = pd.DataFrame([{
         "Gender": gender,
@@ -556,9 +488,9 @@ def predict_obesity(
         "MTRANS": mtrans
     }])
 
-    # -----------------------------
-    # Prediction
-    # -----------------------------
+    # --------------------------------------------------------
+    # PREDICTION
+    # --------------------------------------------------------
 
     prediction = pipeline.predict(user_data)[0]
 
@@ -571,9 +503,9 @@ def predict_obesity(
         prediction
     )
 
-    # -----------------------------
-    # Estimated unhealthy risk
-    # -----------------------------
+    # --------------------------------------------------------
+    # UNHEALTHY CATEGORY RISK
+    # --------------------------------------------------------
 
     healthy_classes = [
         "Insufficient_Weight",
@@ -592,72 +524,46 @@ def predict_obesity(
 
     risk_percentage = unhealthy_probability * 100
 
-    # -----------------------------
-    # Prediction result
-    # -----------------------------
+    # --------------------------------------------------------
+    # RESULT
+    # --------------------------------------------------------
 
     result_html = f"""
-    <div style="
-        border:1px solid #d1d5db;
-        border-radius:8px;
-        padding:20px;
-        background:white;
-        margin-top:10px;
-    ">
+    <div class="result-card">
 
-        <div style="
-            font-size:15px;
-            color:#4b5563;
-        ">
+        <div class="result-label">
             Predicted Obesity Level
         </div>
 
-        <div style="
-            font-size:30px;
-            font-weight:bold;
-            color:#2563eb;
-            margin-top:5px;
-        ">
+        <div class="prediction-value">
             {predicted_label}
         </div>
 
-        <hr style="
-            border:none;
-            border-top:1px solid #e5e7eb;
-            margin:15px 0;
-        ">
+        <div class="result-divider"></div>
 
-        <div style="
-            font-size:15px;
-            color:#4b5563;
-        ">
+        <div class="result-label">
             Estimated model probability of an unhealthy category
         </div>
 
-        <div style="
-            font-size:25px;
-            font-weight:bold;
-            color:#111827;
-            margin-top:5px;
-        ">
+        <div class="risk-value">
             {risk_percentage:.1f}%
         </div>
 
     </div>
     """
 
-    # -----------------------------
-    # Probability chart
-    # -----------------------------
+    # --------------------------------------------------------
+    # PROBABILITY
+    # --------------------------------------------------------
 
     probability_html = create_probability_html(
         probabilities,
         classes
     )
 
-    # -----------------------------
-    # Habit Coach
-    # -----------------------------
+    # --------------------------------------------------------
+    # HABIT COACH
+    # --------------------------------------------------------
 
     habit_coach = generate_habit_coach(
         fcvc,
@@ -671,9 +577,9 @@ def predict_obesity(
         calc
     )
 
-    # -----------------------------
-    # Action Plan
-    # -----------------------------
+    # --------------------------------------------------------
+    # ACTION PLAN
+    # --------------------------------------------------------
 
     action_plan = generate_action_plan(
         fcvc,
@@ -693,52 +599,103 @@ def predict_obesity(
 
 
 # ============================================================
-# 13. SIMPLE CSS
+# 13. PROFESSIONAL UI CSS
 # ============================================================
 
 css = """
 
+/* ---------------------------------------------------------
+   MAIN PAGE
+--------------------------------------------------------- */
+
 body {
-    background: #f8fafc !important;
+    background: #f1f5f9 !important;
 }
 
 .gradio-container {
-    max-width: 1000px !important;
+    max-width: 1050px !important;
     margin: auto !important;
+    padding-bottom: 40px !important;
 }
+
+
+/* ---------------------------------------------------------
+   MAIN TEXT
+--------------------------------------------------------- */
 
 h1 {
-    color: #111827 !important;
+    color: #0f172a !important;
+    font-size: 34px !important;
+    font-weight: 700 !important;
 }
 
-h2, h3 {
-    color: #1f2937 !important;
+h2 {
+    color: #0f3d56 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    margin-top: 25px !important;
 }
 
-label {
-    color: #111827 !important;
+h3 {
+    color: #155e75 !important;
+    font-size: 19px !important;
 }
 
-button.primary {
-    background: #2563eb !important;
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+
+.header-box {
+    background: linear-gradient(
+        135deg,
+        #0f4c81,
+        #087f8c
+    ) !important;
+
     color: white !important;
-    border: none !important;
-    font-size: 17px !important;
-    font-weight: 600 !important;
-    padding: 12px 25px !important;
+
+    border-radius: 14px !important;
+
+    padding: 28px !important;
+
+    margin-bottom: 20px !important;
+
+    box-shadow:
+        0 5px 15px rgba(15, 76, 129, 0.15);
 }
 
-button.primary:hover {
-    background: #1d4ed8 !important;
+.header-box h1 {
+    color: white !important;
+    margin-bottom: 8px !important;
 }
+
+.header-box p {
+    color: #e0f2fe !important;
+}
+
+
+/* ---------------------------------------------------------
+   INFORMATION BOXES
+--------------------------------------------------------- */
 
 .info-box {
-    background: white !important;
-    color: #111827 !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 8px !important;
-    padding: 15px 18px !important;
+    background: #ffffff !important;
+
+    color: #1e293b !important;
+
+    border: 1px solid #dbe4ea !important;
+
+    border-left: 5px solid #0891b2 !important;
+
+    border-radius: 10px !important;
+
+    padding: 18px 20px !important;
+
     margin-bottom: 15px !important;
+
+    box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.05);
 }
 
 .info-box,
@@ -748,54 +705,436 @@ button.primary:hover {
 .info-box div,
 .info-box strong,
 .info-box b {
-    color: #111827 !important;
+    color: #1e293b !important;
 }
 
-.section-title {
-    border-bottom: 1px solid #d1d5db;
-    padding-bottom: 8px;
-    margin-top: 20px;
+.info-box ul {
+    margin-bottom: 0 !important;
 }
+
+
+/* ---------------------------------------------------------
+   INPUT AREAS
+--------------------------------------------------------- */
+
+label {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+input,
+textarea,
+select {
+    border-radius: 8px !important;
+}
+
+
+/* ---------------------------------------------------------
+   PREDICT BUTTON
+--------------------------------------------------------- */
+
+button.primary {
+    background: linear-gradient(
+        135deg,
+        #0f4c81,
+        #0891b2
+    ) !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 9px !important;
+
+    font-size: 18px !important;
+
+    font-weight: 700 !important;
+
+    padding: 13px 28px !important;
+
+    box-shadow:
+        0 4px 10px rgba(8, 145, 178, 0.25);
+
+    transition: 0.2s;
+}
+
+button.primary:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(8, 145, 178, 0.35);
+}
+
+
+/* ---------------------------------------------------------
+   RESULT CARD
+--------------------------------------------------------- */
+
+.result-card {
+    background: linear-gradient(
+        135deg,
+        #eff6ff,
+        #ecfeff
+    );
+
+    border: 1px solid #bae6fd;
+
+    border-radius: 12px;
+
+    padding: 22px;
+
+    margin-top: 8px;
+
+    box-shadow:
+        0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.result-label {
+    color: #475569;
+
+    font-size: 15px;
+
+    font-weight: 600;
+}
+
+.prediction-value {
+    color: #0f4c81;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    margin-top: 6px;
+}
+
+.risk-value {
+    color: #0f172a;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    margin-top: 5px;
+}
+
+.result-divider {
+    height: 1px;
+
+    background: #cbd5e1;
+
+    margin: 18px 0;
+}
+
+
+/* ---------------------------------------------------------
+   BMI CARD
+--------------------------------------------------------- */
+
+.bmi-card {
+    background: #ffffff;
+
+    border: 1px solid #dbe4ea;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.bmi-number {
+    color: #0f172a;
+
+    font-size: 30px;
+
+    font-weight: 800;
+}
+
+.bmi-category {
+    font-size: 19px;
+
+    font-weight: 700;
+
+    margin-top: 4px;
+}
+
+.bmi-scale {
+    position: relative;
+
+    height: 20px;
+
+    margin-top: 20px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        to right,
+        #60a5fa 0%,
+        #60a5fa 25%,
+        #4ade80 25%,
+        #4ade80 50%,
+        #facc15 50%,
+        #facc15 75%,
+        #f87171 75%,
+        #f87171 100%
+    );
+}
+
+.bmi-marker {
+    position: absolute;
+
+    top: -6px;
+
+    width: 5px;
+
+    height: 32px;
+
+    background: #111827;
+
+    border-radius: 4px;
+
+    box-shadow:
+        0 0 0 2px white;
+}
+
+.bmi-labels {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #475569;
+
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   PROBABILITY CARD
+--------------------------------------------------------- */
+
+.probability-card {
+    background: #ffffff;
+
+    border: 1px solid #dbe4ea;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    margin-top: 5px;
+
+    box-shadow:
+        0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.probability-row {
+    margin-bottom: 14px;
+}
+
+.probability-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    margin-bottom: 5px;
+}
+
+.probability-header strong {
+    color: #0f4c81;
+}
+
+.probability-track {
+    width: 100%;
+
+    height: 10px;
+
+    background: #e2e8f0;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.probability-fill {
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #0f4c81,
+        #0891b2
+    );
+
+    border-radius: 8px;
+}
+
+
+/* ---------------------------------------------------------
+   HABIT COACH
+--------------------------------------------------------- */
+
+.habit-box {
+    background: #f0fdfa;
+
+    border: 1px solid #99f6e4;
+
+    border-left: 5px solid #0d9488;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    color: #134e4a;
+}
+
+
+/* ---------------------------------------------------------
+   ACTION PLAN
+--------------------------------------------------------- */
+
+.action-box {
+    background: #eff6ff;
+
+    border: 1px solid #bfdbfe;
+
+    border-left: 5px solid #2563eb;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    color: #1e3a8a;
+}
+
+.action-box,
+.action-box p,
+.action-box strong,
+.action-box b {
+    color: #1e3a8a !important;
+}
+
+
+/* ---------------------------------------------------------
+   DISCLAIMER
+--------------------------------------------------------- */
 
 .disclaimer {
-    background: #fefce8 !important;
-    color: #713f12 !important;
+    background: #fffbeb !important;
+
+    color: #78350f !important;
+
     border: 1px solid #fde68a !important;
-    border-radius: 8px !important;
-    padding: 15px !important;
+
+    border-left: 5px solid #f59e0b !important;
+
+    border-radius: 10px !important;
+
+    padding: 18px !important;
+}
+
+.disclaimer,
+.disclaimer p,
+.disclaimer strong,
+.disclaimer b {
+    color: #78350f !important;
+}
+
+
+/* ---------------------------------------------------------
+   ERROR
+--------------------------------------------------------- */
+
+.error-box {
+    background: #fef2f2;
+
+    color: #991b1b;
+
+    border: 1px solid #fecaca;
+
+    border-left: 5px solid #dc2626;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    h1 {
+        font-size: 27px !important;
+    }
+
+    h2 {
+        font-size: 21px !important;
+    }
+
+    .header-box {
+        padding: 20px !important;
+    }
+
+    .prediction-value {
+        font-size: 25px;
+    }
+
+    .bmi-number {
+        font-size: 26px;
+    }
+
 }
 
 """
 
 
 # ============================================================
-# 14. GRADIO UI
+# 14. GRADIO INTERFACE
 # ============================================================
 
 with gr.Blocks(
-    title="AI/ML Obesity Level Predictor",
+    title="AI/ML-Based Obesity Level Prediction and Personalized Habit Coaching System",
     css=css
 ) as app:
 
-    # --------------------------------------------------------
+    # ========================================================
     # HEADER
-    # --------------------------------------------------------
+    # ========================================================
 
-    gr.Markdown(
+    gr.HTML(
         """
-        # AI/ML Obesity Level Predictor
+        <div class="header-box">
 
-        ### Personalized Habit Coaching System
+            <h1>
+                AI/ML-Based Obesity Level Prediction
+                and Personalized Habit Coaching System
+            </h1>
 
-        This application predicts obesity level using physical,
-        behavioral and lifestyle information and provides simple
-        habit-based recommendations.
+            <p>
+                A machine-learning based application for obesity
+                level prediction and personalized lifestyle guidance.
+            </p>
+
+        </div>
         """
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # ABOUT
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## About Application")
 
@@ -803,20 +1142,27 @@ with gr.Blocks(
         """
         <div class="info-box">
 
-        <p>
-        This project uses Machine Learning to predict obesity levels
-        from lifestyle and demographic information.
-        </p>
+            <p>
+            This application uses Machine Learning to predict
+            obesity levels from demographic, eating and lifestyle
+            information.
+            </p>
 
-        <p>
-        A Random Forest classification model is trained using the
-        UCI Obesity Dataset. The application also calculates BMI
-        separately and provides simple lifestyle suggestions.
-        </p>
+            <p>
+            A Random Forest classification model is trained using
+            the UCI Obesity Dataset. The application also calculates
+            BMI separately and provides simple personalized
+            habit recommendations.
+            </p>
 
         </div>
         """
     )
+
+
+    # ========================================================
+    # HOW TO ENTER VALUES
+    # ========================================================
 
     gr.Markdown("## How to Enter Values")
 
@@ -824,21 +1170,38 @@ with gr.Blocks(
         """
         <div class="info-box">
 
-        <ul>
-            <li>Enter your information in the fields below.</li>
-            <li>Height should be entered in metres.</li>
-            <li>Weight should be entered in kilograms.</li>
-            <li>Use the values that best describe your usual habits.</li>
-            <li>Click <b>Predict Obesity Level</b> to see the results.</li>
-        </ul>
+            <ul>
+
+                <li>
+                    Enter the information that best describes you.
+                </li>
+
+                <li>
+                    Enter height in metres.
+                </li>
+
+                <li>
+                    Enter weight in kilograms.
+                </li>
+
+                <li>
+                    Use the sliders for lifestyle-related values.
+                </li>
+
+                <li>
+                    Click <b>Predict Obesity Level</b> to view your results.
+                </li>
+
+            </ul>
 
         </div>
         """
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # PERSONAL INFORMATION
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Personal Information")
 
@@ -873,24 +1236,25 @@ with gr.Blocks(
             maximum=300
         )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # FAMILY & EATING HABITS
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Family & Eating Habits")
 
     with gr.Row():
 
         family_history = gr.Dropdown(
-            choices=["yes", "no"],
+            choices=["Yes", "No"],
             label="Family History of Overweight",
-            value="no"
+            value="No"
         )
 
         favc = gr.Dropdown(
-            choices=["yes", "no"],
+            choices=["Yes", "No"],
             label="Frequent High-Calorie Food",
-            value="no"
+            value="No"
         )
 
     with gr.Row():
@@ -915,7 +1279,7 @@ with gr.Blocks(
 
         caec = gr.Dropdown(
             choices=[
-                "no",
+                "No",
                 "Sometimes",
                 "Frequently",
                 "Always"
@@ -932,24 +1296,25 @@ with gr.Blocks(
             label="Daily Water Intake"
         )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # PHYSICAL ACTIVITY & OTHER HABITS
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Physical Activity & Other Habits")
 
     with gr.Row():
 
         smoke = gr.Dropdown(
-            choices=["yes", "no"],
+            choices=["Yes", "No"],
             label="Smoking",
-            value="no"
+            value="No"
         )
 
         scc = gr.Dropdown(
-            choices=["yes", "no"],
+            choices=["Yes", "No"],
             label="Calories Monitoring",
-            value="no"
+            value="No"
         )
 
     with gr.Row():
@@ -974,7 +1339,7 @@ with gr.Blocks(
 
         calc = gr.Dropdown(
             choices=[
-                "no",
+                "No",
                 "Sometimes",
                 "Frequently",
                 "Always"
@@ -995,9 +1360,10 @@ with gr.Blocks(
             value="Public_Transportation"
         )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # PREDICT BUTTON
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("")
 
@@ -1006,25 +1372,37 @@ with gr.Blocks(
         variant="primary"
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # RESULTS
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Prediction Results")
 
     result_output = gr.HTML()
 
+
+    # ========================================================
+    # BMI
+    # ========================================================
+
     gr.Markdown("### BMI Indicator")
 
     bmi_output = gr.HTML()
+
+
+    # ========================================================
+    # PROBABILITY
+    # ========================================================
 
     gr.Markdown("### Prediction Probability")
 
     probability_output = gr.HTML()
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # UNDERSTANDING RESULTS
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Understanding Results")
 
@@ -1032,31 +1410,35 @@ with gr.Blocks(
         """
         <div class="info-box">
 
-        <p>
-        The predicted obesity level is generated by the Random Forest
-        machine-learning model using the information entered above.
-        </p>
+            <p>
+            The predicted obesity level is generated by the
+            Random Forest machine-learning model using the
+            information entered above.
+            </p>
 
-        <p>
-        BMI is calculated separately using height and weight:
-        </p>
+            <p>
+            BMI is calculated separately using height and weight:
+            </p>
 
-        <p>
-        <b>BMI = Weight (kg) / Height² (m²)</b>
-        </p>
+            <p style="font-size:17px;">
 
-        <p>
-        The probability values show how strongly the trained model
-        associates the input with each obesity category.
-        </p>
+                <b>BMI = Weight (kg) / Height² (m²)</b>
+
+            </p>
+
+            <p>
+            The probability values show how strongly the trained
+            model associates the input with each obesity category.
+            </p>
 
         </div>
         """
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # HABIT COACH
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Simple Habit Coach")
 
@@ -1064,9 +1446,10 @@ with gr.Blocks(
         "Your habit suggestions will appear here."
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # ACTION PLAN
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Personalized Action Plan")
 
@@ -1074,9 +1457,10 @@ with gr.Blocks(
         "Your action plan will appear here."
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # MODEL INFORMATION
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## About AI/ML Model")
 
@@ -1084,24 +1468,50 @@ with gr.Blocks(
         """
         <div class="info-box">
 
-        <ul>
-            <li><b>Dataset:</b> UCI Obesity Dataset</li>
-            <li><b>Dataset ID:</b> 544</li>
-            <li><b>Model:</b> Random Forest Classifier</li>
-            <li><b>Number of Trees:</b> 300</li>
-            <li><b>Train-Test Split:</b> 80:20</li>
-            <li><b>Classification:</b> 7 obesity categories</li>
-            <li><b>Framework:</b> Scikit-learn</li>
-            <li><b>Interface:</b> Gradio</li>
-        </ul>
+            <ul>
+
+                <li>
+                    <b>Dataset:</b> UCI Obesity Dataset
+                </li>
+
+                <li>
+                    <b>Dataset ID:</b> 544
+                </li>
+
+                <li>
+                    <b>Model:</b> Random Forest Classifier
+                </li>
+
+                <li>
+                    <b>Number of Trees:</b> 300
+                </li>
+
+                <li>
+                    <b>Train-Test Split:</b> 80:20
+                </li>
+
+                <li>
+                    <b>Classification:</b> 7 obesity categories
+                </li>
+
+                <li>
+                    <b>Framework:</b> Scikit-learn
+                </li>
+
+                <li>
+                    <b>Interface:</b> Gradio
+                </li>
+
+            </ul>
 
         </div>
         """
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # DISCLAIMER
-    # --------------------------------------------------------
+    # ========================================================
 
     gr.Markdown("## Disclaimer")
 
@@ -1109,25 +1519,27 @@ with gr.Blocks(
         """
         <div class="disclaimer">
 
-        <b>Important:</b>
+            <b>Important:</b>
 
-        <p>
-        This application is developed for educational and
-        demonstration purposes only. The predictions and
-        recommendations are not medical diagnoses and should
-        not replace professional medical advice.
-        </p>
+            <p>
+            This application is developed for educational and
+            demonstration purposes only. The predictions and
+            recommendations are not medical diagnoses and should
+            not replace professional medical advice.
+            </p>
 
         </div>
         """
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # BUTTON FUNCTION
-    # --------------------------------------------------------
+    # ========================================================
 
     predict_button.click(
         fn=predict_obesity,
+
         inputs=[
             age,
             gender,
@@ -1146,6 +1558,7 @@ with gr.Blocks(
             calc,
             mtrans
         ],
+
         outputs=[
             result_output,
             bmi_output,
